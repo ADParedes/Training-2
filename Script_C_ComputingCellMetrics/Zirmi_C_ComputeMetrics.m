@@ -1685,3 +1685,5 @@ highestValue = sortedValues*coe;
      histogram(highestValue,50);
      ylabel('Absolute Velocity(um/min)')
     title(strcat('Histogram of velocity(um/min)  30-',str_ArrGT{3}))
+    
+display ('FINISHED: Zirmi_C - Compute Metrics')    

@@ -171,15 +171,10 @@ clearvars -except POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GF
 %%  Save
 %% Save
 if ADP.boo2 == 1 || 0
-    disp('ADP specific Task: Save in ADP directory automatically')
-    dir_metadata='C:\Users\AndreDaniel\OneDrive - University of Illinois at Chicago\PhD Work\PhD matlab\Zirmi_Metrics';
-    
+    disp('ADP
 else
-    disp('USER: Select a directory you want to save metadata')
-    dir_metadata = uigetdir();
 end;
-ADP.dir_metadat=dir_metadata;
-cd(dir_metadata);
+ADP.dir_metadat='C:\Users\AndreDaniel\OneDrive - University of Illinois at Chicago\PhD Work\PhD matlab\Zirmi_Metrics';
 disp('Saving...')
 POI.Parameter10d        = strcat(POI.Parameter10a,'_',POI.Parameter11c);
 save(POI.Parameter10d)

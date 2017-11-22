@@ -19,6 +19,8 @@ if strcmp(hostname,'ADP-Chicago'); %this is the desktop
 elseif strcmp(hostname,'ADPAREDES') %this is the labtop
     disp('Selected Labtop Directory')
     boo_desktop             =   0;
+else
+    boo_destop              =   2;
 end;
 disp('END: Computer Identified')
 %% Directory Identifications          
