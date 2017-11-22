@@ -28,15 +28,24 @@ disp('WARNING: If Removing Movement remember to save NEW handles')
 pause(2);
 %% Load PARAMETERS, POI, PhagoSight & ADP  Needed 
 %Note: Phagosight DNE PhagoSight (two separate variables)
-ParameterA              = PARAMETERS.ParameterA; % Majority Track Percent
+ParameterA              = PARAMETERS.ParameterA;   % Majority Track Percent
+ParameterB              = PARAMETERS.ParameterB;   % Staticity Threshold
+ParameterS              = PARAMETERS.ParameterS;   % Spatial Threshold - 150um is default
 
-micronsPerPixel         = PARAMETERS.Parameter2; % LateralPixelResolution  
-micronsPerStack         = PARAMETERS.Parameter3; % micronsPerStack   
-SamplingFrequency       = PARAMETERS.Parameter4; % Sampling Frequency
-MPI_start               = PARAMETERS.Parameter5; % Minutes post injury (Start of Imaging) ; old: t_plate
-dir_EOI                 = POI.Parameter10c;      % Experiment Directory (E.g. AB020 within Confocal)
-str_FOI                 = POI.Parameter11c;      % ExperimentFish of Interest (E.g. P2 within AB020) 
+micronsPerPixel         = PARAMETERS.Parameter2;   % LateralPixelResolution  
+micronsPerStack         = PARAMETERS.Parameter3;   % micronsPerStack   
+SamplingFrequency       = PARAMETERS.Parameter4;   % Sampling Frequency
+MPI_start               = PARAMETERS.Parameter5;   % Minutes post injury (Start of Imaging) ; old: t_plate
+
+Parameter_gtA           = POI.Parameter_gtA;       % MTP for all each Temporal segment
+dir_EOI                 = POI.Parameter10c;        % Experiment Directory (E.g. AB020 within Confocal)
+str_FOI                 = POI.Parameter11c;        % ExperimentFish of Interest (E.g. P2 within AB020) 
 valsPh2                 = POI.Parameter13;      
+
+woundRegion             = PhagoSight.woundRegion;
+wR1                     = PhagoSight.wR1;          % Wound Gap Epicenter
+wR2                     = PhagoSight.wR2;          % Notochord Tip Epicenter
+disp('End: Paramters load')
 %% Simple Calculations (Pixel based information)
 coe                     =(micronsPerPixel/SamplingFrequency); %microns per minute
 zstack                  = length(valsPh2);
@@ -781,7 +790,7 @@ for J=1:length(arr_GT)
 %                         plot(i_nody,i_nodx,'.','MarkerSize',20);     
                     gtnodxy(ii,1)=i_nodx;
                     gtnodxy(ii,2)=i_nody;
-                    inWound(ii)=PhagoSight.woundRegion(round(i_nodx),round(i_nody));
+                    inWound(ii)=woundRegion(round(i_nodx),round(i_nody));
 
                 end;                               
                 framenode=handles.nodeNetwork(temp_uID,5);
