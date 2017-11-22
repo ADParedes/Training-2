@@ -28,6 +28,8 @@ disp('WARNING: If Removing Movement remember to save NEW handles')
 pause(2);
 %% Load PARAMETERS, POI, PhagoSight & ADP  Needed 
 %Note: Phagosight DNE PhagoSight (two separate variables)
+ParameterA              = PARAMETERS.ParameterA; % Majority Track Percent
+
 micronsPerPixel         = PARAMETERS.Parameter2; % LateralPixelResolution  
 micronsPerStack         = PARAMETERS.Parameter3; % micronsPerStack   
 SamplingFrequency       = PARAMETERS.Parameter4; % Sampling Frequency
@@ -779,7 +781,7 @@ for J=1:length(arr_GT)
 %                         plot(i_nody,i_nodx,'.','MarkerSize',20);     
                     gtnodxy(ii,1)=i_nodx;
                     gtnodxy(ii,2)=i_nody;
-                    inWound(ii)=woundRegion(round(i_nodx),round(i_nody));
+                    inWound(ii)=PhagoSight.woundRegion(round(i_nodx),round(i_nody));
 
                 end;                               
                 framenode=handles.nodeNetwork(temp_uID,5);
