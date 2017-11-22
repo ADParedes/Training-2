@@ -1,6 +1,7 @@
 % 5/06/17 Evaluation of 5 metrics of interest 
 % meandering index, velocity, static ratio, directionality and persistence
 close all;
+micronsPerPixel         = PARAMETERS.Parameter2;   % LateralPixelResolution  
 str_int_timepoints  =['30- 59 min';'60- 89 min';'90-120 min'];
 str_cum_timepoints  =['30- 60 min';'30- 90 min';'30-120 min'];
 N                   =length(str_int_timepoints);
@@ -15,14 +16,14 @@ input_metric        =input('What metric SM. velocity , tortuosity,meandering, st
     z                   =input_metric.phagosight;
     x                   = 1;
     N                   = 3;
-    %--for velocity
-            y                   =input_metric.interval{1}*coe;
-            y1                  =input_metric.interval{2}*coe;
-            y2                  =input_metric.interval{3}*coe;
-            yy                  =input_metric.cum{1}*coe;
-            yy1                 =input_metric.cum{2}*coe;
-            yy2                 =input_metric.cum{3}*coe;
-            z                   =input_metric.phagosight*coe;
+    %%%--for velocity
+            y                   =input_metric.interval{1}*micronsPerPixel;
+            y1                  =input_metric.interval{2}*micronsPerPixel;
+            y2                  =input_metric.interval{3}*micronsPerPixel;
+            yy                  =input_metric.cum{1}*micronsPerPixel;
+            yy1                 =input_metric.cum{2}*micronsPerPixel;
+            yy2                 =input_metric.cum{3}*micronsPerPixel;
+            z                   =input_metric.phagosight*micronsPerPixel;
 ymax    = 9;
 ymin    = 2;
 %% -Interval%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -40,7 +41,7 @@ figure('Color',[1 1 1]);ylim([ymin ymax])
 
  notBoxPlot(y2,3,'style','sdline')
     set(gca,'XLim',[0 N+1],'XTick',1:N,'XTickLabel',str_int_timepoints,'fontweight','bold','fontsize',14);
-%     title('Interval')
+     title('Interval')
     ylabel('Absolute Velocity(um/min) ','fontsize',18,'fontweight','bold')
 %   title('Meandering Index')
 %   set(gca,'fontweight','bold','fontsize',18)
@@ -59,7 +60,7 @@ figure('Color',[1 1 1]);ylim([ymin ymax])
   hold on
  notBoxPlot(yy2,3,'style','sdline')
     set(gca,'XLim',[0 N+1],'XTick',1:N,'XTickLabel',str_cum_timepoints,'fontweight','bold','fontsize',14);
-%     title('Cummulative')
+     title('Cumulative')
     ylabel('Absolute Velocity(um/min) ','fontsize',18,'fontweight','bold')
 %   title('Meandering Index')
 
@@ -73,7 +74,7 @@ figure('Color',[1 1 1]);ylim([ymin ymax])
 %  plot(x+3,y3,'v')
  notBoxPlot(z,1,'style','sdline')
     set(gca,'XLim',[0 2],'XTick',1,'XTickLabel','30-120min','fontweight','bold','fontsize',14);
-%     title('Phagosight')
+     title('Phagosight')
 %   title('Meandering Index')
 ylabel('Absolute Velocity(um/min) ','fontsize',18,'fontweight','bold')
 

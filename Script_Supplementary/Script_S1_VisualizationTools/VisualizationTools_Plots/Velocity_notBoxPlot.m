@@ -3,7 +3,7 @@
 close all;
 str_int_timepoints  =['30- 59 min';'60- 89 min';'90-120 min'];
 str_cum_timepoints  =['30- 60 min';'30- 90 min';'30-120 min'];
-
+micronsPerPixel     = PARAMETERS.Parameter2;   % LateralPixelResolution  
 N                   =length(str_int_timepoints);
 % input_metric        =input('What metric SM. velocity , tortuosity,meandering, staticratio, directionality and persistence ...');
 input_metric = SM.velocity;
@@ -14,20 +14,20 @@ input_metric = SM.velocity;
     yy                  =input_metric.cum{1};
     yy1                 =input_metric.cum{2};
     yy2                 =input_metric.cum{3};
-    yyy                   =input_metric.intervalsm{1}*coe;
-    yyy1                  =input_metric.intervalsm{2}*coe;
-    yyy2                  =input_metric.intervalsm{3}*coe;
+    yyy                   =input_metric.intervalsm{1}*micronsPerPixel;
+    yyy1                  =input_metric.intervalsm{2}*micronsPerPixel;
+    yyy2                  =input_metric.intervalsm{3}*micronsPerPixel;
     z                   =input_metric.phagosight;
     x                   = 1;
     N                   = 3;
     %--for velocity
-            zy                   =input_metric.interval{1}*coe;
-            zy1                  =input_metric.interval{2}*coe;
-            zy2                  =input_metric.interval{3}*coe;
-            yy                  =input_metric.cum{1}*coe;
-            yy1                 =input_metric.cum{2}*coe;
-            yy2                 =input_metric.cum{3}*coe;
-            z                   =input_metric.phagosight*coe;
+            zy                   =input_metric.interval{1}*micronsPerPixel;
+            zy1                  =input_metric.interval{2}*micronsPerPixel;
+            zy2                  =input_metric.interval{3}*micronsPerPixel;
+            yy                  =input_metric.cum{1}*micronsPerPixel;
+            yy1                 =input_metric.cum{2}*micronsPerPixel;
+            yy2                 =input_metric.cum{3}*micronsPerPixel;
+            z                   =input_metric.phagosight*micronsPerPixel;
 ymax    = 10;
 ymin    = 0;
 %% -Interval%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
