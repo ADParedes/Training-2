@@ -1631,35 +1631,42 @@ lens        = length(str_ArrGT);
 Worthy      = 0;
 hops        = frames*mp;
 for i=1:lens
-    %--------------------------------------------------
-    len_veli                            = mp-length(SM.velocity.interval{i}); % Metric #1 Velocity
-    len_tori                            = mp-length(SM.tortuosity.interval{i}); % Metric #4 Tortuosity
-    len_meai                            = mp-length(SM.meandering.interval{i}); % Metric #3 Meandering Index
-    len_stai                            = mp-length(SM.staticratio.interval{i}); % Metric #2 Static Ratio
-    len_forw                            = mp-length(SM.forward.interval{i}); % Metric #5 Forward
-    len_FBratio                         = mp-length(SM.FBratio.interval{i}); % Metric #6 FBratio
-    len_wounddist                       = mp-length(SM.WoundScoreUm.interval{i}); % Metric #7 Start-End Toward Wound
-    %%%%%UPDATE 08/15/2017 Still need to do the bottom for metric 5 6 7 and
-    %%%%%maybe 8 (woundscore1234)
-    
-    len_velc=mp-length(SM.velocity.cum{i});
-    len_torc=mp-length(SM.tortuosity.cum{i});
-    len_meac=mp-length(SM.meandering.cum{i});
-    len_stac=mp-length(SM.staticratio.cum{i});
+    %--Interval Lengths (They should all be the same)
+    len_1                   = mp-length(SM.velocity.interval{i});       % Metric #1 Velocity
+    len_2                   = mp-length(SM.staticratio.interval{i});    % Metric #2 Static Ratio
+    len_3                   = mp-length(SM.meandering.interval{i});     % Metric #3 Meandering Index
+    len_4                   = mp-length(SM.tortuosity.interval{i});     % Metric #4 Tortuosity
+    len_5                   = mp-length(SM.forward.interval{i});        % Metric #5 Forward
+    len_6                   = mp-length(SM.FBratio.interval{i});        % Metric #6 FBratio
+    len_7                   = mp-length(SM.WoundScoreUm.interval{i});   % Metric #7 Start-End Toward Wound
+    len_8                   = mp-length(SM.WoundScore1234.interval{i}); % Metric #8 Assigned Scores           
+    %--------------------------------------------------    
+    lenc_1                  = mp-length(SM.velocity.cum{i});
+    lenc_2                  = mp-length(SM.staticratio.cum{i});   
+    lenc_3                  = mp-length(SM.meandering.cum{i});
+    lenc_4                  = mp-length(SM.tortuosity.cum{i});
     %---------------------------------------------------
-    Worthy.SM.velocity.interval{i}      =    horzcat(SM.velocity.interval{i},nan(1,len_veli));
-    Worthy.SM.velocity.cum{i}           =    horzcat(SM.velocity.cum{i},nan(1,len_velc));
-    Worthy.SM.tortuosity.interval{i}    =    horzcat(SM.tortuosity.interval{i},nan(1,len_tori));
-    Worthy.SM.tortuosity.cum{i}         =    horzcat(SM.tortuosity.cum{i},nan(1,len_torc));
-    Worthy.SM.meandering.interval{i}    =    horzcat(SM.meandering.interval{i},nan(1,len_meai));
-    Worthy.SM.meandering.cum{i}         =    horzcat(SM.meandering.cum{i},nan(1,len_meac));
-    Worthy.SM.staticratio.interval{i}   =    horzcat(SM.staticratio.interval{i},nan(1,len_stai));
-    Worthy.SM.staticratio.cum{i}        =    horzcat(SM.staticratio.cum{i},nan(1,len_stac));
-    %--------------------------------------------------
+    Worthy.SM.velocity.interval{i}      =    horzcat(SM.velocity.interval{i},nan(1,len_1));     %Metric #1 velocity
+    Worthy.SM.velocity.cum{i}           =    horzcat(SM.velocity.cum{i},nan(1,lenc_1));         %Metric #1 
+    Worthy.SM.staticratio.interval{i}   =    horzcat(SM.staticratio.interval{i},nan(1,len_2));  %Metric #2 static ratio
+    Worthy.SM.staticratio.cum{i}        =    horzcat(SM.staticratio.cum{i},nan(1,lenc_2));      %Metric #2  
+    Worthy.SM.meandering.interval{i}    =    horzcat(SM.meandering.interval{i},nan(1,len_3));   %Metric #3 Meandering
+    Worthy.SM.meandering.cum{i}         =    horzcat(SM.meandering.cum{i},nan(1,lenc_3));       %Metric #3  
+    Worthy.SM.tortuosity.interval{i}    =    horzcat(SM.tortuosity.interval{i},nan(1,len_4));   %Metric #4 Tortuosity
+    Worthy.SM.tortuosity.cum{i}         =    horzcat(SM.tortuosity.cum{i},nan(1,lenc_4));       %Metric #4 
+    Worthy.SM.forward.interval{i}       =    horzcat(SM.forward.interval{i},nan(1,len_5));      %Metric #4 Forward
+    Worthy.SM.forward.cum{i}            =    horzcat(SM.forward.cum{i},nan(1,lenc_1));          %Metric #4 
+    Worthy.SM.FBratio.interval{i}       =    horzcat(SM.FBratio.interval{i},nan(1,len_6));      %Metric #4 FBratio
+    Worthy.SM.FBratio.cum{i}            =    horzcat(SM.FBratio.cum{i},nan(1,lenc_1));          %Metric #4 
+    Worthy.SM.WoundScoreUm.interval{i}  =    horzcat(SM.WoundScoreUm.interval{i},nan(1,len_7)); %Metric #4 WoundScoreUm
+    Worthy.SM.WoundScoreUm.cum{i}       =    horzcat(SM.WoundScoreUm.cum{i},nan(1,lenc_1));     %Metric #4 
+    Worthy.SM.WoundScore1234.interval{i}=    horzcat(SM.WoundScore1234.interval{i},nan(1,len_7)); %Metric #4 WoundScoreUm
+    Worthy.SM.WoundScore1234.cum{i}     =    horzcat(SM.WoundScore1234.cum{i},nan(1,lenc_1));     %Metric #4 
+   %--------------------------------------------------
     len_Fveli    = hops-length(Frame.velocity.interval{i});
     len_Fstai    = hops-length(Frame.staticratio.interval{i});    
-    len_Fvelc   = hops-length(Frame.velocity.cum{i});
-    len_Fstac   = hops-length(Frame.staticratio.cum{i}); 
+    len_Fvelc    = hops-length(Frame.velocity.cum{i});
+    len_Fstac    = hops-length(Frame.staticratio.cum{i}); 
     
     Worthy.Frame.velocity.interval{i}      =    horzcat(Frame.velocity.interval{i}',nan(1,len_Fveli));
     Worthy.Frame.velocity.cum{i}           =    horzcat(Frame.velocity.cum{i}',nan(1,len_Fvelc));
@@ -1667,23 +1674,25 @@ for i=1:lens
     Worthy.Frame.staticratio.cum{i}        =    horzcat(Frame.staticratio.cum{i}',nan(1,len_Fstac));
     
 
-    
+    pause()
 end;
 
 display('End: Worthy')
 %% Histogram of Hops
-%All this is is a histogram of all HOPS
-a=Frame.velocity.cum{3};
-[sortedValues,~] = sort(a,1,'descend');
-exclude = sortedValues > 12;
-sortedValues(exclude) = [];
-highestValue = sortedValues*coe;
+% %All this is is a histogram of all HOPS
+% a=Frame.velocity.cum{3};
+% [sortedValues,~] = sort(a,1,'descend');
+% exclude = sortedValues > 12;
+% sortedValues(exclude) = [];
+% highestValue = sortedValues*coe;
+% 
+% 
+%     FigHandle = figure;
+%     set(FigHandle, 'Position', [100, 100, 350, 250]); %[x1, y1, x2, y2]
+%      histogram(highestValue,50);
+%      ylabel('Absolute Velocity(um/min)')
+%     title(strcat('Histogram of velocity(um/min)  30-',str_ArrGT{3}))
+%%  Clear vars
+% clearvars -except POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
 
-
-    FigHandle = figure;
-    set(FigHandle, 'Position', [100, 100, 350, 250]); %[x1, y1, x2, y2]
-     histogram(highestValue,50);
-     ylabel('Absolute Velocity(um/min)')
-    title(strcat('Histogram of velocity(um/min)  30-',str_ArrGT{3}))
-    
 display ('FINISHED: Zirmi_C - Compute Metrics')    
