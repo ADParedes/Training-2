@@ -1,16 +1,16 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%ZEBRAFISH EXCEL DOCTOR IT
 %Move Excel  GTs 60, 90, 120, 150, 180 and max to excel.
-%CREATED 2016/09/28
-display(name)
+%Updated 2017/11/24
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Calibrations
 %%%%%%%%Pixels Per Micron
 %coe=(micronsPerPixel/ti_d); %microns per minute %%FIX THIS after abstract
-Str                 = 0;
-Str.name            = strcat(name,'_',inputName);
-str_velocityunits   ='um/min';
-smat                = strcat(s,'.mat');
+Str                     = 0; % New Structure Array
+Str.name                = POI.Parameter10d;
+Str.velocityunits       ='um/min';
+Str.mat                 = strcat(s,'.mat');
 str_exp_num         = name(3:end);
 num_exp             =str2num(str_exp_num);
 num.addendum            ={ti_d,t_plate};

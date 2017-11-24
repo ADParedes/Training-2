@@ -13,6 +13,10 @@ input_metric        =input('What metric SM. velocity , tortuosity,meandering, st
     yy                  =input_metric.cum{1};
     yy1                 =input_metric.cum{2};
     yy2                 =input_metric.cum{3};
+    yyy                   =input_metric.intervalsm{1}*micronsPerPixel;
+    yyy1                  =input_metric.intervalsm{2}*micronsPerPixel;
+    yyy2                  =input_metric.intervalsm{3}*micronsPerPixel;
+    z                   =input_metric.phagosight;
     z                   =input_metric.phagosight;
     x                   = 1;
     N                   = 3;
@@ -77,4 +81,93 @@ figure('Color',[1 1 1]);ylim([ymin ymax])
      title('Phagosight')
 %   title('Meandering Index')
 ylabel('Absolute Velocity(um/min) ','fontsize',18,'fontweight','bold')
+%% Statistics
+npstat=(0);
+pstat=(0);
+%NOTE: h is only a logic signal to whether it hit the %5 statistical
+%significance, it has nothing to do with parametric vs non parametric
+%distribution
+%     y                   =input_metric.interval{1};
+%     y1                  =input_metric.interval{2};
+%     y2                  =input_metric.interval{3};
+%     yy                  =input_metric.cum{1};
+%     yy1                 =input_metric.cum{2};
+%     yy2                 =input_metric.cum{3};
+%     z                   =input_metric.phagosight;
+%Wilcoxon signed rank test.  - two sided nonparametric paired -p value
+% [p,h,stats]    =signtest(yy1,z); %needs to be the same number of elements?!! what
+% disp(p)
+[p,h,stats]    =signrank(yy,yy1); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(1)=p;
+[p,h,stats]    =signrank(yy,yy2); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(2)=p;
+[p,h,stats]    =signrank(yy1,yy2); %needs to be the same number of elements?!! what 
+disp([h p]); npstat(3)=p;
 
+[p,h,stats]    =signrank(yyy,yyy1); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(4)=p;
+[p,h,stats]    =signrank(yyy,yyy2); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(5)=p;
+[p,h,stats]    =signrank(yyy1,yyy2); %needs to be the same number of elements?!! what 
+disp([h p]); npstat(6)=p;
+
+[p,h,stats]    =signrank(yy,z); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(7)=p;
+[p,h,stats]    =signrank(yy1,z); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(8)=p;
+[p,h,stats]    =signrank(yy2,z); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(9)=p;
+[p,h,stats]    =signrank(yyy,z); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(10)=p;
+[p,h,stats]    =signrank(yyy1,z); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(11)=p;
+[p,h,stats]    =signrank(yyy2,z); %needs to be the same number of elements?!! what    
+disp([h p]); npstat(12)=p;
+
+
+% tttest is for two sided parametric paired p value
+%cum
+[h,p,stats]    =ttest(yy,yy1); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(1)=p;
+[h,p,stats]    =ttest(yy,yy2); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(2)=p;
+[h,p,stats]    =ttest(yy1,yy2); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(3)=p;
+%intervalSM
+[h,p,stats]    =ttest(yyy,yyy1); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(4)=p;
+[h,p,stats]    =ttest(yyy,yyy2); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(5)=p;
+[h,p,stats]    =ttest(yyy1,yyy2); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(6)=p;
+%phago
+[h,p,stats]    =ttest(yy,z); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(7)=p;
+[h,p,stats]    =ttest(yy1,z); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(8)=p;
+[h,p,stats]    =ttest(yy2,z); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(9)=p;
+[h,p,stats]    =ttest(yyy,z); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(10)=p;
+[h,p,stats]    =ttest(yyy1,z); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(11)=p;
+[h,p,stats]    =ttest(yyy2,z); %needs to be the same number of elements?!! what    
+disp([h p]); pstat(12)=p;
+% ttest2 is for two sided parametric unpaired p value
+% [h,p,stats]    =ttest2(y,y2); %needs to be the same number of elements?!! what    
+% disp([h p])
+% [h,p,stats]    =ttest2(yy1,z); %needs to be the same number of elements?!! what    
+% disp([h p])
+% [h,p,stats]    =ttest2(yy2,z); %needs to be the same number of elements?!! what    
+% disp([h p])
+% [h,p,stats]    =ttest2(yyy,z); %needs to be the same number of elements?!! what    
+% disp([h p])
+% [h,p,stats]    =ttest2(yyy1,z); %needs to be the same number of elements?!! what    
+% disp([h p])
+% [h,p,stats]    =ttest2(yyy2,z); %needs to be the same number of elements?!! what    
+% disp([h p])
+zstat=[npstat;pstat];
+yyys=[yyy;yyy1;yyy2;z];
+yys=[yy;yy1;yy2];
+zzz=vertcat(yys,yyys);
+% ys=[y;y1;y2];

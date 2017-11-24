@@ -1693,6 +1693,6 @@ display('End: Worthy')
 %      ylabel('Absolute Velocity(um/min)')
 %     title(strcat('Histogram of velocity(um/min)  30-',str_ArrGT{3}))
 %%  Clear vars
-% clearvars -except POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
+ clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
 
 display ('FINISHED: Zirmi_C - Compute Metrics')    
