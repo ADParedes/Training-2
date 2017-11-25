@@ -4,17 +4,18 @@
 %Updated 2017/11/24
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Recognized GUI-ed Parameters
+%% Calibrations
+%%%%%%%%Pixels Per Micron
+%coe=(micronsPerPixel/ti_d); %microns per minute %%FIX THIS after abstract
 Str                     = 0; % New Structure Array
-Str.velocityunits       ='um/min';
 Str.name                = POI.Parameter10d;
+Str.velocityunits       ='um/min';
 Str.exp_num             = POI.Parameter10a(3:end);
 Num.exp                 = str2num(Str.exp_num);
-Num.micronsPerPixel     = PARAMETERS.Parameter2;
-Num.SamplingFrequency   = PARAMETERS.Parameter4;
-Num.MPI                 = PARAMETERS.Parameters5;
-
-display('End: Recognize Parameters')
+Num.addendum            ={ti_d,t_plate};
+Num.micronsPerPixel     = 
+disp(strcat('MicronsPerPixel : ',num2str(micronsPerPixel)))
+display('End: Calibration')
 %% Directory Sorting
 inputWorC           = input('0J,3J,9J,DoubleWound,NoWound ','s');
 if Num.exp<46
