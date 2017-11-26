@@ -1001,7 +1001,7 @@ for i=1:mp
                     Jun=distmap.Jun(1:GT_60,i);
                    	[non_zero]=find(Jun~=0);
                     tmp=abs(non_zero-GT_60);
-                    [idx idx] = min(tmp); % index of closest value
+                    [idx, idx] = min(tmp); % index of closest value
                     closest = non_zero(idx); % closest value
                     [idx_whaa60]=find(Col14==i & Col05==closest);
                     sup60=Col05(idx_whaa60);
@@ -1690,7 +1690,7 @@ display('End: Worthy')
 %      ylabel('Absolute Velocity(um/min)')
 %     title(strcat('Histogram of velocity(um/min)  30-',str_ArrGT{3}))
 %%  Clear vars
-SM.persistence      = SM.WoundScore1234; % Better name, This is a score 1:4  1 being in wound region 4 being farthest score away from wound region.
- clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
+
+clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
 
 display ('FINISHED: Zirmi_C - Compute Metrics')    

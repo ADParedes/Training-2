@@ -5,44 +5,64 @@
 disp('START: Zirmi F: Create Excel Tables')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Recognized GUI-ed Parameters
-clear Str Num % New Structure Array
-Str.velocityunits       ='um/min';
+clear Str Num Dirs RawMetrics % New Structure Array
 Str.name                = POI.Parameter10d;
-Str.exp_num             = POI.Parameter10a(3:end);
-Num.exp                 = str2num(Str.exp_num);
+Str.expnum             = POI.Parameter10a(3:end);
+Str.MetricType          ={'Velocity(um/min)','StaticRatio', 'MeanderingRatio',...
+                            'Tortuosity(abu)','ForwardRatio','ForwardtoBackwardRatio'...
+                            'WoundDistance(um)','WoundScore(1-4)'};
+Num.exp                 = str2num(Str.expnum); %#ok<ST2NM>
 Num.micronsPerPixel     = PARAMETERS.Parameter2;
 Num.SamplingFrequency   = PARAMETERS.Parameter4;
 Num.MPI                 = PARAMETERS.Parameter5;
+
+Dirs.Main            = ADP.dir_metadat;
+
+RawMetrics.MetricType     ={SM.velocity,SM.staticratio,SM.meandering,...
+                            SM.tortuosity,SM.forward,SM.FBratio,...
+                            SM.WoundScoreUm,SM.WoundScore1234};
+
+
 display('End: Recognize Parameters')
-%% Directory Sorting SPECIFIC TO ADP
+%% Directory Branching/Sorting For Saving .xls files
+
+
 if ADP.boo2 == 1 || 0
-    inputWorC           = input('0J,3J,9J,DoubleWound,NoWound ','s');
+    %-Experiment Type Descriptor
+    Dirs.ExpSet           = input('0J,3J,9J,DoubleWound,NoWound ','s');
     if Num.exp<46
-        inputFish           = 'mpegdendra2';
+        Dirs.Fish           = 'mpegdendra2';
     elseif Num.exp>46
-        inputFish           = 'mpxdendra2';
+        Dirs.Fish           = 'mpxdendra2';
     else
         disp('error in Directory Sorting')
     end;
-    inputDataType       ={'cumulative','interval','intervalsm','phagosight'};
+    %-Sort Directory ADP Automatically
+    if checkConfocal==1
+        str_tempsave        ='C:\Users\AndreDaniel\OneDrive\PhD Data\Data_Dissertation\ZebrafishMetrics';
+        disp('Saving it in Onedrive Phd Data')%Saving it On Dropbox in Dr. B folder Data')
+    else
+        str_tempsave        ='E:\PhD Paredes Data\Dissertation Data';
+        disp('E:\Phd Paredes Data\Dissertation Data')%Saving it On Dropbox in Dr. B folder Data')
+    end;
 else
-    inputFish           =input('Please Input an Experiment Descriptor (E.g. mpeg or mpx dendra2 ','s'); 
+    Dirs.ExpSet           = input(strcat('Please Input Experiment Set Descriptor',...
+                                '(E.g. Set#1 or 9J'),'s');
+    Dirs.Fish           = input(stcat('Please Input Tg(Fish) Descriptor',...
+                                '(E.g. mpeg or mpx dendra2 '),'s'); 
+    
 end;
-%-Folder
-if checkConfocal==1
-    str_tempsave        ='C:\Users\AndreDaniel\OneDrive\PhD Data\Data_Dissertation\ZebrafishMetrics';
-    disp('Saving it in Onedrive Phd Data')%Saving it On Dropbox in Dr. B folder Data')
-else
-    str_tempsave        ='E:\PhD Paredes Data\Dissertation Data';
-    disp('E:\Phd Paredes Data\Dissertation Data')%Saving it On Dropbox in Dr. B folder Data')
-end;
+
+Str.DataType       ={'interval','intervalsm','cumulative',...
+                            'phagosight'};
+
 display('End: Directory Sorting')
 %% THE FOR LOOP
 RawMetrics  = 0; %Structure Array For all Mp of interest (the SM ones)
 FishMean    = 0; %Structure Array for the entire fish mean
 arr_str_GT  ={'GT_60','GT_90','GT_120','max'};
 Mp          = length(handles.finalLabel); %never changes this is the numofTracks
-for J=1:3 %only dooing GT 60 90 and 120
+for J=1:4 %only dooing GT 60 90 and 120
 
     cd(str_tempsave)
     %% Put into arrays
@@ -157,7 +177,7 @@ for J=1:3 %only dooing GT 60 90 and 120
     
     %% Big Array
     STRING={s};
-    STRING_WorC={inputWorC};
+    STRING_WorC={inputExp};
     %Sheet 1 Alternative
     Table_1=0;
     Arr_Table1=0;

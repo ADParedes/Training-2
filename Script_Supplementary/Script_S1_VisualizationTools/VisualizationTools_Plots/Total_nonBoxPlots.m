@@ -1,14 +1,20 @@
 % 5/06/17 Evaluation of 5 metrics of interest 
 % meandering index, velocity, static ratio, directionality and persistence
 close all;
-SM.persistence      = SM.WoundScore1234;
-micronsPerPixel         = PARAMETERS.Parameter2;   % LateralPixelResolution  
-str_int_timepoints  =['30- 59 min';'60- 89 min';'90-120 min'];
-str_cum_timepoints  =['30- 60 min';'30- 90 min';'30-120 min'];
-N                   =length(str_int_timepoints);
-input_metric        =input(strcat('Please Write Selected Metric e.g "SM.velocity" or ', ...
-                           '"SM.staticratio" or "SM.meandering" or "SM.tortuosity" or ',...
-                           '"SM.FBratio" and "SM.persistence"'));
+
+micronsPerPixel             = PARAMETERS.Parameter2;   % LateralPixelResolution  
+str_int_timepoints          =['30- 59 min';'60- 89 min';'90-120 min'];
+str_cum_timepoints          =['30- 60 min';'30- 90 min';'30-120 min'];
+N                           = length(str_int_timepoints);
+str_MetricType              ={'Velocity(um/min)','StaticRatio', 'MeanderingRatio',...
+                                'Tortuosity(abu)','ForwardRatio','ForwardtoBackwardRatio'...
+                                'WoundDistance(um)','WoundScore(1-4)'};
+rawMetrics_MetricType       ={SM.velocity,SM.staticratio,SM.meandering,...
+                                SM.tortuosity,SM.forward,SM.FBratio,...
+                                SM.WoundScoreUm,SM.WoundScore1234};                        
+input_metric                =input(strcat('Please Write Selected Metric e.g "SM.velocity" or ', ...
+                                '"SM.staticratio" or "SM.meandering" or "SM.tortuosity" or ',...
+                                '"SM.Forward'));
 %--metrics of interest
     y                   =input_metric.interval{1};
     y1                  =input_metric.interval{2};
@@ -22,7 +28,6 @@ input_metric        =input(strcat('Please Write Selected Metric e.g "SM.velocity
     z                   =input_metric.phagosight;
     z                   =input_metric.phagosight;
     x                   = 1;
-    N                   = 3;
     %%%--for velocity
             y                   =input_metric.interval{1}*micronsPerPixel;
             y1                  =input_metric.interval{2}*micronsPerPixel;
@@ -169,8 +174,13 @@ disp([h p]); pstat(12)=p;
 % disp([h p])
 % [h,p,stats]    =ttest2(yyy2,z); %needs to be the same number of elements?!! what    
 % disp([h p])
-zstat=[npstat;pstat];
-yyys=[yyy;yyy1;yyy2;z];
-yys=[yy;yy1;yy2];
-zzz=vertcat(yys,yyys);
+zstat       =[npstat;pstat];
+yyys        =[yyy;yyy1;yyy2;z];     %intervalsm -- 70% per total track as defined by that interval (therefore needs to be in ALL intervals)
+yys         =[yy;yy1;yy2];          %cum
+ys          =[y;y1;y2];             %interval  -- 90% per that interval
+zzz         = vertcat(yys,yyys);
 % ys=[y;y1;y2];
+
+%% Clear Variables
+ clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
+
