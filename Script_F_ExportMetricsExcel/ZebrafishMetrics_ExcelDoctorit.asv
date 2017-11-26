@@ -2,30 +2,32 @@
 %%%%%%%ZEBRAFISH EXCEL DOCTOR IT
 %Move Excel  GTs 60, 90, 120, 150, 180 and max to excel.
 %Updated 2017/11/24
-
+disp('START: Zirmi F: Create Excel Tables')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Calibrations
-%%%%%%%%Pixels Per Micron
-%coe=(micronsPerPixel/ti_d); %microns per minute %%FIX THIS after abstract
-Str                     = 0; % New Structure Array
-Str.name                = POI.Parameter10d;
+%% Recognized GUI-ed Parameters
+clear Str Num % New Structure Array
 Str.velocityunits       ='um/min';
+Str.name                = POI.Parameter10d;
 Str.exp_num             = POI.Parameter10a(3:end);
 Num.exp                 = str2num(Str.exp_num);
-Num.addendum            ={ti_d,t_plate};
-Num.micronsPerPixel     = 
-disp(strcat('MicronsPerPixel : ',num2str(micronsPerPixel)))
-display('End: Calibration')
-%% Directory Sorting
-inputWorC           = input('0J,3J,9J,DoubleWound,NoWound ','s');
-if Num.exp<46
-    inputFish           = 'mpegdendra2';
-elseif Num.exp>46
-    inputFish           = 'mpxdendra2';
+Num.micronsPerPixel     = PARAMETERS.Parameter2;
+Num.SamplingFrequency   = PARAMETERS.Parameter4;
+Num.MPI                 = PARAMETERS.Parameter5;
+display('End: Recognize Parameters')
+%% Directory Sorting SPECIFIC TO ADP
+if ADP.boo2 == 1 || 0
+    inputWorC           = input('0J,3J,9J,DoubleWound,NoWound ','s');
+    if Num.exp<46
+        inputFish           = 'mpegdendra2';
+    elseif Num.exp>46
+        inputFish           = 'mpxdendra2';
+    else
+        disp('error in Directory Sorting')
+    end;
+    inputDataType       ={'cumulative','interval','intervalsm','phagosight'};
 else
-    disp('error in Directory Sorting')
+    inputFish           =input('Please Input an Experiment Descriptor (E.g. mpeg or mpx dendra2','s'); 
 end;
-inputDataType      = {'cumulative','interval','intervalsm','phagosight'};
 %-Folder
 if checkConfocal==1
     str_tempsave        ='C:\Users\AndreDaniel\OneDrive\PhD Data\Data_Dissertation\ZebrafishMetrics';

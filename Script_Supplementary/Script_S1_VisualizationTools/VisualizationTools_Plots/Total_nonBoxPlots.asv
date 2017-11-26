@@ -1,14 +1,13 @@
 % 5/06/17 Evaluation of 5 metrics of interest 
 % meandering index, velocity, static ratio, directionality and persistence
 close all;
-SM.persistence      = SM.WoundScore1234;
 micronsPerPixel         = PARAMETERS.Parameter2;   % LateralPixelResolution  
 str_int_timepoints  =['30- 59 min';'60- 89 min';'90-120 min'];
 str_cum_timepoints  =['30- 60 min';'30- 90 min';'30-120 min'];
 N                   =length(str_int_timepoints);
-input_metric        =input(strcat('Please Write Selected Metric e.g "SM.velocity" or ', ...
-                           '"SM.staticratio" or "SM.meandering" or "SM.tortuosity" or ',...
-                           '"SM.FBratio" and "SM.persistence"'));
+input_metric        =input(strcat('Please Write Selected Metric e.g  "SM.velocity" or', ...
+                           '"SM.staticratio" or "SM.meandering" or "SM.tortuosity" or',...
+                           '"SM.FBratio" i.e. directionality and "SM.persistence i.e...'));
 %--metrics of interest
     y                   =input_metric.interval{1};
     y1                  =input_metric.interval{2};

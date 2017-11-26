@@ -1667,14 +1667,11 @@ for i=1:lens
     len_Fstai    = hops-length(Frame.staticratio.interval{i});    
     len_Fvelc    = hops-length(Frame.velocity.cum{i});
     len_Fstac    = hops-length(Frame.staticratio.cum{i}); 
-    
+    %------
     Worthy.Frame.velocity.interval{i}      =    horzcat(Frame.velocity.interval{i}',nan(1,len_Fveli));
     Worthy.Frame.velocity.cum{i}           =    horzcat(Frame.velocity.cum{i}',nan(1,len_Fvelc));
     Worthy.Frame.staticratio.interval{i}   =    horzcat(Frame.staticratio.interval{i}',nan(1,len_Fstai));
     Worthy.Frame.staticratio.cum{i}        =    horzcat(Frame.staticratio.cum{i}',nan(1,len_Fstac));
-    
-
-    pause()
 end;
 
 display('End: Worthy')
@@ -1693,6 +1690,7 @@ display('End: Worthy')
 %      ylabel('Absolute Velocity(um/min)')
 %     title(strcat('Histogram of velocity(um/min)  30-',str_ArrGT{3}))
 %%  Clear vars
+SM.persistence      = SM.WoundScore1234; % Better name, This is a score 1:4  1 being in wound region 4 being farthest score away from wound region.
  clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
 
 display ('FINISHED: Zirmi_C - Compute Metrics')    
