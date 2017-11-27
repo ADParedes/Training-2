@@ -170,13 +170,15 @@ clearvars -except POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GF
 
 %%  Save
 %% Save
-if ADP.boo2 == 1 || 0
-    disp('ADP specific Task: Save in ADP directory automatically')
-    dir_metadata='C:\Users\AndreDaniel\OneDrive - University of Illinois at Chicago\PhD Work\PhD matlab\Zirmi_Metrics';
-    
-else
-    disp('USER: Select a directory you want to save metadata')
-    dir_metadata = uigetdir();
+switch ADP.boo2
+    case {0,1}
+        disp('Hello ADP - directory selected automatically')
+        dir_metadata='C:\Users\AndreDaniel\OneDrive - University of Illinois at Chicago\PhD Work\PhD matlab\Zirmi_Metrics';   
+    case {2}
+        disp('Hello USER: Select a directory you want to save metadata')
+        dir_metadata = uigetdir();
+    otherwise 
+        warning('Zirmi Cannot Recognize Your Computer')
 end;
 ADP.dir_metadat=dir_metadata;
 cd(dir_metadata);

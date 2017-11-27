@@ -1,21 +1,30 @@
 % 5/06/17 Evaluation of 5 metrics of interest 
 % meandering index, velocity, static ratio, directionality and persistence
 close all;
-
+%% Define/Select Parameters
+clear s input_metric
 micronsPerPixel             = PARAMETERS.Parameter2;   % LateralPixelResolution  
 str_int_timepoints          =['30- 59 min';'60- 89 min';'90-120 min'];
 str_cum_timepoints          =['30- 60 min';'30- 90 min';'30-120 min'];
 N                           = length(str_int_timepoints);
-str_MetricType              ={'Velocity(um/min)','StaticRatio', 'MeanderingRatio',...
-                                'Tortuosity(abu)','ForwardRatio','ForwardtoBackwardRatio'...
-                                'WoundDistance(um)','WoundScore(1-4)'};
+str_Metricname              ={'Velocity','StaticRatio', 'MeanderingRatio',...
+                                'Tortuosity','ForwardRatio','ForwardtoBackwardRatio'...
+                                'WoundDistance','WoundScore'};
+names                       = str_Metricname;
+for ind                     = 1:length(str_Metricname)
+    s.(names{ind})              = 1;
+end;
+                            
+                            
 rawMetrics_MetricType       ={SM.velocity,SM.staticratio,SM.meandering,...
                                 SM.tortuosity,SM.forward,SM.FBratio,...
-                                SM.WoundScoreUm,SM.WoundScore1234};                        
+                                SM.WoundScoreUm,SM.WoundScore1234};   
+%% Compute Metrics of interest                            
 input_metric                =input(strcat('Please Write Selected Metric e.g "SM.velocity" or ', ...
                                 '"SM.staticratio" or "SM.meandering" or "SM.tortuosity" or ',...
                                 '"SM.Forward'));
-%--metrics of interest
+                            
+
     y                   =input_metric.interval{1};
     y1                  =input_metric.interval{2};
     y2                  =input_metric.interval{3};

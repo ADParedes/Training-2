@@ -2,180 +2,211 @@
 %%%%%%%ZEBRAFISH EXCEL DOCTOR IT
 %Move Excel  GTs 60, 90, 120, 150, 180 and max to excel.
 %Updated 2017/11/24
+clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
 disp('START: Zirmi F: Create Excel Tables')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Recognized GUI-ed Parameters
-clear Str Num Dirs RawMetrics % New Structure Array
-Str.velocityunits       ='um/min';
+clear Str Num Dirs Cell Array % New Structure Array
 Str.name                = POI.Parameter10d;
-Str.exp_num             = POI.Parameter10a(3:end);
-Str.MetricType          ={'Velocity','Static Ratio', 'Meandering Ratio',...
-                            'Tortuosity','Forward','Forward
-
-Num.exp                 = str2num(Str.exp_num); %#ok<ST2NM>
+Str.expnum              = POI.Parameter10a(3:end);
+Str.MetricType          ={'Velocity(um/min)','StaticRatio', 'MeanderingRatio',...
+                            'Tortuosity(abu)','ForwardRatio','ForwardtoBackwardRatio'...
+                            'WoundDistance(um)','WoundScore(1-4)'};
+Str.MetricName          ={'Velocity','StaticRatio', 'MeanderingRatio',...
+                                'Tortuosity','ForwardRatio','ForwardtoBackwardRatio'...
+                                'WoundDistance','WoundScore','ID'};
+Str.MetricSM            ={'velocity','staticratio', 'meandering',...
+                                'tortuosity','forward','FBratio'...
+                                'WoundScoreUm','WoundScore1234'};
+Str.Sheets              ={'SumAll','MpAll','Score1','Score2',...
+                            'Score3','Score4'};
+Str.DataType            ={'interval','intervalsm','cum',...
+                            'phagosight'};
+Str.DataTypeFile        ={'Interval','IntervalSM','Cumulative'};
+Str.GT                  ={'GT_60','GT_90','GT_120','max'}; 
+Str.Sheet1              ={'min/frame','MPI','Unique ExpID',...
+                            'Velocity(um/min)','StaticRatio', 'MeanderingRatio',...
+                            'Tortuosity(abu)','ForwardRatio','ForwardtoBackwardRatio'...
+                            'WoundDistance(um)','WoundScore(1-4)',...   %11 Points
+                            'STD1','STD2','STD3','STD4','STD5','STD6','STD7','STD8'}; %18 Points
+Str.Sheet23456          ={'Unique ExpID','Unique MpID',...
+                            'Velocity(um/min)','StaticRatio', 'MeanderingRatio',...
+                            'Tortuosity(abu)','ForwardRatio','ForwardtoBackwardRatio'...
+                            'WoundDistance(um)','WoundScore(1-4)'}; %10 Points    
+                                                         
+Num.exp                 = str2num(Str.expnum); %#ok<ST2NM>
+Num.mp                  = length(handles.finalLabel); %never changes this is the numofTracks
 Num.micronsPerPixel     = PARAMETERS.Parameter2;
 Num.SamplingFrequency   = PARAMETERS.Parameter4;
 Num.MPI                 = PARAMETERS.Parameter5;
+Num.TimeIntervals       = 3;  %only dooing GT 60 90 and 120
+Num.Scores              = 4;
+Num.Sheets              = 6;
+Num.DataType            = length(Str.DataType);
 
-Dirs.Main            = ADP.dir_metadat;
+Dirs.Main               = ADP.dir_metadat;
 
-RawMetrics.MetricType     ={SM.velocity,SM.staticratio,SM.meandering,...
+Arrays.MetricSM         ={SM.velocity,SM.staticratio,SM.meandering,...
                             SM.tortuosity,SM.forward,SM.FBratio,...
-                            SM.WoundScoreUm,SM.WoundScore1234};
-
-
+                            SM.WoundScoreUm,SM.WoundScore1234,Worthy.ID};
 display('End: Recognize Parameters')
 %% Directory Branching/Sorting For Saving .xls files
-
-
-if ADP.boo2 == 1 || 0
+switch ADP.boo2 
+    case {1,0}
+        disp('Hello ADP')
     %-Experiment Type Descriptor
-    Dirs.ExpSet           = input('0J,3J,9J,DoubleWound,NoWound ','s');
-    if Num.exp<46
-        Dirs.Fish           = 'mpegdendra2';
-    elseif Num.exp>46
-        Dirs.Fish           = 'mpxdendra2';
-    else
-        disp('error in Directory Sorting')
-    end;
-    %-Sort Directory ADP Automatically
-    if checkConfocal==1
-        str_tempsave        ='C:\Users\AndreDaniel\OneDrive\PhD Data\Data_Dissertation\ZebrafishMetrics';
-        disp('Saving it in Onedrive Phd Data')%Saving it On Dropbox in Dr. B folder Data')
-    else
-        str_tempsave        ='E:\PhD Paredes Data\Dissertation Data';
-        disp('E:\Phd Paredes Data\Dissertation Data')%Saving it On Dropbox in Dr. B folder Data')
-    end;
-else
-    Dirs.ExpSet           = input(strcat('Please Input Experiment Set Descriptor',...
-                                '(E.g. Set#1 or 9J'),'s');
-    Dirs.Fish           = input(stcat('Please Input Tg(Fish) Descriptor',...
-                                '(E.g. mpeg or mpx dendra2 '),'s'); 
-    
+        Str.ExpSet             ='test';
+%         Dirs.ExpSet           = input('0J,3J,9J,DoubleWound,NoWound ','s');
+        if Num.exp<46
+            Str.Fish           = 'mpegdendra2';
+        elseif Num.exp>46
+            Str.Fish           = 'mpxdendra2';
+        else
+            disp('error in Directory Sorting')
+        end;
+
+    case {2}
+        disp('Hello User')
+        Str.ExpSet           = input(strcat('Please Input Experiment Set Descriptor',...
+                                    '(E.g. Set#1 or 9J'),'s');
+        Str.Fish           = input(stcat('Please Input Tg(Fish) Descriptor',...
+                                   '(E.g. mpeg or mpx dendra2 '),'s'); 
+    otherwise 
+        warning('Zirmi Cannot Recognize Your Computer - will error')   
 end;
+display('End: Directory Labeling')
+%% THE FOR LOOP  
+for J=1:Num.TimeIntervals
+    %% Main Directory
+    clear FishMean RawMetrics  %Structure Array for the entire fish mean
+    clear Interval IntervalSm Cumulative
+    cd(Dirs.Main)
+    %% Sort into Time Specific Structure Arrays
+    for ind             = 1:length(Str.MetricName);
+        switch Str.MetricName{ind}
+            case {'ID'}
+                Interval.(Str.MetricName{ind})              = Arrays.MetricSM{ind}.interval{J};
+                IntervalSM.(Str.MetricName{ind})            = Arrays.MetricSM{ind}.intervalsm;   
+                Cumulative.(Str.MetricName{ind})            = Arrays.MetricSM{ind}.cum;
+            otherwise  
+                Interval.(Str.MetricName{ind}).all          = Arrays.MetricSM{ind}.interval{J};
+                IntervalSM.(Str.MetricName{ind}).all        = Arrays.MetricSM{ind}.intervalsm{J};   
+                Cumulative.(Str.MetricName{ind}).all        = Arrays.MetricSM{ind}.cum{J};
+                
+                Interval.(Str.MetricName{ind}).mean          = nanmean(Arrays.MetricSM{ind}.interval{J});
+                IntervalSM.(Str.MetricName{ind}).mean        = nanmean(Arrays.MetricSM{ind}.intervalsm{J});
+                Cumulative.(Str.MetricName{ind}).mean        = nanmean(Arrays.MetricSM{ind}.cum{J});
+                
+                Interval.(Str.MetricName{ind}).std          = nanstd(Arrays.MetricSM{ind}.interval{J});
+                IntervalSM.(Str.MetricName{ind}).std        = nanstd(Arrays.MetricSM{ind}.intervalsm{J});
+                Cumulative.(Str.MetricName{ind}).std        = nanstd(Arrays.MetricSM{ind}.cum{J});                
+        end;
+    end;
 
-Str.DataType       ={'interval','intervalsm','cumulative',...
-                            'phagosight'};
-
-display('End: Directory Sorting')
-%% THE FOR LOOP
-RawMetrics  = 0; %Structure Array For all Mp of interest (the SM ones)
-FishMean    = 0; %Structure Array for the entire fish mean
-arr_str_GT  ={'GT_60','GT_90','GT_120','max'};
-Mp          = length(handles.finalLabel); %never changes this is the numofTracks
-for J=1:4 %only dooing GT 60 90 and 120
-
-    cd(str_tempsave)
-    %% Put into arrays
-%-Mp ID
-%-Metric#0: WoundScore1234
-%-METRIC#1: Velocity 
-    RawMetrics.velocity{1}              = SM.velocity.interval{J};
-    RawMetrics.velocity{2}              = SM.velocity.intervalsm{J};
-    RawMetrics.velocity{3}              = SM.velocity.cum{J};
-    RawMetrics.velocity{4}              = SM.velocity.phagosight;
-%-METRIC#2: Static Ratio
-    RawMetrics.staticratio{1}           = SM.staticratio.interval{J};
-    RawMetrics.staticratio{2}           = SM.staticratio.intervalsm{J};
-    RawMetrics.staticratio{3}           = SM.staticratio.cum{J};
-    RawMetrics.staticratio{4}           = SM.staticratio.phagosight;
-%-Metric#3: Tortuosity
-    RawMetrics.tortuosity{1}            = SM.tortuosity.interval{J};
-    RawMetrics.tortuosity{2}            = SM.tortuosity.intervalsm{J};
-    RawMetrics.tortuosity{3}            = SM.tortuosity.cum{J};
-    RawMetrics.tortuosity{4}            = SM.tortuosity.phagosight;
-%-Metric#4: Meandering Index 
-    RawMetrics.meandering{1}            = SM.meandering.interval{J};
-    RawMetrics.meandering{2}            = SM.meandering.intervalsm{J};
-    RawMetrics.meandering{3}            = SM.meandering.cum{J};
-    RawMetrics.meandering{4}            = SM.meandering.phagosight;
-%-Metric#5: Forward Ratio
-    RawMetrics.forward{1}               = SM.forward.interval{J};
-    RawMetrics.forward{2}               = SM.forward.intervalsm{J};
-    RawMetrics.forward{3}               = SM.forward.cum{J};
-    RawMetrics.forward{4}               = SM.forward.phagosight;
-%-Metric#6: ForwardtoBackward
-    RawMetrics.ftob{1}                  = SM.FtoB.interval{J};
-    RawMetrics.ftob{2}                  = SM.FtoB.intervalsm{J};
-    RawMetrics.ftob{3}                  = SM.FtoB.cum{J};
-    RawMetrics.ftob{4}                  = SM.FtoB.phagosight;   
 %-Metric#7: Forward to Backward (normalized)  
-    RawMetrics.fbratio{1}               = SM.FBratio.interval{J};
-    RawMetrics.fbratio{2}               = SM.FBratio.intervalsm{J};
-    RawMetrics.fbratio{3}               = SM.FBratio.cum{J};
-    RawMetrics.fbratio{4}               = SM.FBratio.phagosight;
 %-Metric#8: WoundScoreUm  - is the distance to the wound gap from initial
 %point to the final point | negative(-) means closer ; positive(+) means moved farther away.
 %(ADP Labnotebook pg 92)
-    RawMetrics.woundscore{1}            = SM.WoundScoreUm.interval{J};
-    RawMetrics.woundscore{2}            = SM.WoundScoreUm.intervalsm{J};
-    RawMetrics.woundscore{3}            = SM.WoundScoreUm.cum{J};
-    RawMetrics.woundscore{4}            = SM.WoundScoreUm.phagosight;
-    %% Interval Sheet1  
-
-    Str.Interval.Sheet1         ={'Sec/Frame','MPI',Str.name,'Velocity','Static Ratio,'...,
-                                    'Tortuosity','Meandering Index','Forward','FtoB'...,
-                                    'FBnormalized','WoundScoreUm'}; %11 Points
-    for K=1:4
-    %-Velocity
-        FishMean.velocity{K}    = RawMetrics.velocity{K};
-    %-Static Ratio
-        FishMean.staticratio{K} = RawMetrics.staticratio{K};
-    %-Tortuosity
-        FishMean.tortuosity{K}  = RawMetrics.tortuosity{K};
-    %-Mendering Index
-        FishMean.meandering{K}  = RawMetrics.meandering{K};
-    %-Forward
-        FishMean.forward{K}     = RawMetrics.forward{K};
-    %-FtoB
-        FishMean.ftob{K}        = RawMetrics.ftob{K};
-    %-FBnormaliized
-        FishMean.fbratio{K}     = RawMetrics.fbratio{K};
-    %-WoundScoreUm
-        FishMean.woundscore{K}  = RawMetrics.woundscore{K};            
+    disp('End: Sorted into Time Structure Arrays');
+    %% Sort into Wound Score Structure Arrays
+    i   = 0;
+    for I = 1:Num.Sheets; 
+        temp1           = Str.Sheets{I};
+        switch temp1
+            case{'Score1','Score2','Score3','Score4'}
+                i                       = i+1;
+                Interval.(temp1)        = find(Interval.WoundScore.all == i);
+                IntervalSM.(temp1)      = find(IntervalSM.WoundScore.all == i);
+                Cumulative.(temp1)      = find(Cumulative.WoundScore.all == i);
+                for ind                 = 1:length(Str.MetricName);                   
+                   switch Str.MetricName{ind}
+                       case {'ID'}
+                            Interval.xls.(Str.Sheets{I}).vals(:,1)          = Interval.(Str.MetricName{ind})(Interval.(temp1))';
+                            IntervalSM.xls.(Str.Sheets{I}).vals(:,1)        = IntervalSM.(Str.MetricName{ind})(IntervalSM.(temp1))';   
+                            Cumulative.xls.(Str.Sheets{I}).vals(:,1)        = Cumulative.(Str.MetricName{ind})(Cumulative.(temp1))';  
+                       otherwise                          
+                            Interval.xls.(Str.Sheets{I}).vals(:,ind+1)          = Interval.(Str.MetricName{ind}).all(Interval.(temp1))';
+                            IntervalSM.xls.(Str.Sheets{I}).vals(:,ind+1)        = IntervalSM.(Str.MetricName{ind}).all(IntervalSM.(temp1))';   
+                            Cumulative.xls.(Str.Sheets{I}).vals(:,ind+1)        = Cumulative.(Str.MetricName{ind}).all(Cumulative.(temp1))'; 
+                   end;
+                end;
+            case{'MpAll'}
+                for ind                 = 1:length(Str.MetricName);                   
+                   switch Str.MetricName{ind}
+                       case {'ID'}
+                            Interval.xls.(Str.Sheets{I}).vals(:,1)          = Interval.(Str.MetricName{ind})';
+                            IntervalSM.xls.(Str.Sheets{I}).vals(:,1)        = IntervalSM.(Str.MetricName{ind})';   
+                            Cumulative.xls.(Str.Sheets{I}).vals(:,1)        = Cumulative.(Str.MetricName{ind})';  
+                       otherwise                          
+                            Interval.xls.(Str.Sheets{I}).vals(:,ind+1)          = Interval.(Str.MetricName{ind}).all';
+                            IntervalSM.xls.(Str.Sheets{I}).vals(:,ind+1)        = IntervalSM.(Str.MetricName{ind}).all';   
+                            Cumulative.xls.(Str.Sheets{I}).vals(:,ind+1)        = Cumulative.(Str.MetricName{ind}).all'; 
+                   end;
+                end;
+            otherwise
+                for ind2                 = 1:length(Str.MetricName);
+                    switch Str.MetricName{ind2}
+                        case {'ID'}
+%                             Interval.xls.(Str.Sheets{I}).vals(:,ind2)         = Interval.(Str.MetricName{ind2})';
+%                             IntervalSM.xls.(Str.Sheets{I}).vals(:,ind2)        = IntervalSM.(Str.MetricName{ind2})';   
+%                             Cumulative.xls.(Str.Sheets{I}).vals(:,ind2)        = Cumulative.(Str.MetricName{ind2})';  
+                        otherwise
+                            Interval.xls.(Str.Sheets{I}).vals(:,ind2)          = Interval.(Str.MetricName{ind2}).mean';
+                            IntervalSM.xls.(Str.Sheets{I}).vals(:,ind2)        = IntervalSM.(Str.MetricName{ind2}).mean';   
+                            Cumulative.xls.(Str.Sheets{I}).vals(:,ind2)        = Cumulative.(Str.MetricName{ind2}).mean';     
+                            
+                            Interval.xls.(Str.Sheets{I}).std(:,ind2)          = Interval.(Str.MetricName{ind2}).std';
+                            IntervalSM.xls.(Str.Sheets{I}).std(:,ind2)        = IntervalSM.(Str.MetricName{ind2}).std';   
+                            Cumulative.xls.(Str.Sheets{I}).std(:,ind2)        = Cumulative.(Str.MetricName{ind2}).std'; 
+                    end;
+                end
+        end;
     end;
-    %% Sheet 2
-    %MpID# Is where exactly
-    %Sort RawMetrics By Score
-    
-    Str.Interval.Sheet23456     ={Str.name,'MpID#','MpScore','Velocity','Static Ratio,'...,
-                                    'Tortuosity','Meandering Index','Forward'...,
-                                    'FtoB','FBnormalized','WoundScoreUm'}; %12 Points    
-                                
-                                
-                                
-                                
-                                
-%-tort
-    FishMean.it=mean(Arr_Tort_interval);
-    Mean_ct=mean(Arr_Tort_cum);
-    Mean_pt=mean(Arr_Tort_phag);
-%-meandering
-    Mean_im=mean(Arr_Meander);
-    Mean_cm=mean(Arr_Meander_cum);
-    Mean_pm=mean(Arr_Meander_phag);
-%-Static
-    Mean_isr=mean(Arr_staticr_interval);
-    Mean_csr=mean(Arr_staticr_cum);
-    Mean_psr=mean(Arr_staticr_phag);
-    %%------------------NOTE WE DO FRAMES BY BLOCKS NOT AVERAGE OF FRAMES
-    Mean_isf=mean(Arr_staticf_interval);
-    Mean_csf=mean(Arr_staticf_cum);
-    %-Velocity
-    Mean_iv=mean(Arr_vel_interval);
-    Mean_cv=mean(Arr_vel_cum);
-%     Arr_staticr_phag=SM.velocity.phagosight;
-    Mean_ivf=mean(Arr_velf_interval);
-    Mean_cvf=mean(Arr_veclf_cum);
+      disp('End: Sorted into Wound Score Structure Arrays');
+    %% Sheet 1: Mean
+    clear Zirmi Sheets
+    cd(Dirs.Main)
+    mkdir(Dirs.Main,Str.Fish);cd(Str.Fish)
+    Dirs.Fish          = cd;
+    mkdir(Dirs.Fish,Str.ExpSet);cd(Str.ExpSet)
+    Dirs.ExpSet          = cd;
+    Zirmi.Interval     = Interval;
+    Zirmi.IntervalSM   = IntervalSM;
+    Zirmi.Cumulative   = Cumulative;
+
+    %Note: This is For GT_'J'
+    for ind4           = 1:length(Str.DataTypeFile);
+        cd(Dirs.ExpSet) % Relocate To ExperimentSet (E.g. 0J,3J,18J...)
+        
+        for ind5            = 1:length(Str.Sheets);
+            temp1               = Str.Sheets{ind5};
+            temp2               = Zirmi.(Str.DataTypeFile{ind4}).xls.(Str.Sheets{ind5}).vals;
+            [row,col]           = size(temp2);      
+            switch temp1
+                case{'MpAll','Score1','Score2','Score3','Score4'}
+                            placeholder         = num2cell(temp2);
+                            tempA               = cell(row,1);
+                            tempA(:)            = {Str.name};
+                            Sheets.num{ind5}        =placeholder;
+                            Sheets.raw{ind5}        =[tempA,placeholder];
+                            Sheets.title{ind5}  = [Str.Sheet23456;Sheets.raw{ind5}];
                     
-    Array_Mean={Mean_it,Mean_ct,Mean_pt...
-                ,Mean_im,Mean_cm,Mean_pm...
-                ,Mean_isr,Mean_csr,Mean_psr...
-                ,Mean_iv,Mean_cv...
-                ,Mean_isf,Mean_csf,...
-                Mean_ivf,Mean_cvf};
-    Table_Mean=[Str_Mean;Array_Mean;];
-    
+                otherwise 
+                            temp3               = Zirmi.(Str.DataTypeFile{ind4}).xls.(Str.Sheets{ind5}).std;
+                            placeholder2        = num2cell(temp2);
+                            placeholder3        = num2cell(temp3);
+                            Sheets.num{ind5}        =[placeholder2,placeholder3];
+                            Sheets.raw{ind5}        =[[Num.SamplingFrequency],...
+                                                        Num.MPI,...
+                                                        Str.name,[Sheets.num{ind5}]];
+                            Sheets.title{ind5}  = [Str.Sheet1;Sheets.raw{ind5}];
+            end;
+            file_excel         = strcat(Str.DataTypeFile{ind4},...
+                                            '_',Str.GT{J},'.xlsx');%DataType_Time
+            [NUM_1,TXT_1,RAW_1]= xlsread(file_excel,ind5);
+        end;
+    end;
+      
     %% Big Array
     STRING={s};
     STRING_WorC={inputExp};
@@ -188,13 +219,7 @@ for J=1:4 %only dooing GT 60 90 and 120
 
     %% Combined Excel
 %     display(s) 
-    file_excel='Metrics.xlsx';
 
-    [NUM_1,TXT_1,RAW_1]=xlsread(file_excel,1);
-    [NUM_2,TXT_2,RAW_2]=xlsread(file_excel,2);
-    [NUM_3,TXT_3,RAW_3]=xlsread(file_excel,3);
-    TXT={TXT_1,TXT_2,TXT_3};
-    RAW={RAW_1,RAW_2,RAW_3};
     %%When STARTING EXCEL FOR FIRST TIME
 %     pause()
     %%
@@ -209,7 +234,7 @@ for J=1:4 %only dooing GT 60 90 and 120
 
     end;
     %%%%
-    disp(strcat('Excel End_',arr_str_GT{J}))
+    disp(strcat('Excel End_',Str.GT{J}))
 end;
 disp(name5)
 disp('FINISHED')
