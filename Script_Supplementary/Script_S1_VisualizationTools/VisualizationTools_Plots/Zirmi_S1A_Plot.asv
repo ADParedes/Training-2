@@ -37,7 +37,7 @@ input_metric                =input(strcat('Please Write Selected Metric e.g "vel
             yyy1                  =SM.(input_metric).intervalsm{2}*micronsPerPixel;
             yyy2                  =SM.(input_metric).intervalsm{3}*micronsPerPixel;
             z                   =SM.(input_metric).phagosight*micronsPerPixel;                     
-            ymax    = max(y1)+1;
+            ymax    = max(y1)+1.5;
             ymin    = min(y1)-1;           
         otherwise
             y                   =SM.(input_metric).interval{1};
@@ -50,8 +50,8 @@ input_metric                =input(strcat('Please Write Selected Metric e.g "vel
             yyy1                  =SM.(input_metric).intervalsm{2};
             yyy2                  =SM.(input_metric).intervalsm{3};
             z                   =SM.(input_metric).phagosight;            
-            ymax    = max(y1)+0.2;
-            ymin    = min(y1)-0.2;
+            ymax    = max(yy)+0.5;
+            ymin    = min(yy)-0.5;
     end;
 %% -Interval%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 figure('Color',[1 1 1]);ylim([ymin ymax])
