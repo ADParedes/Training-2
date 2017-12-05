@@ -175,10 +175,10 @@ for J=1:Num.TimeIntervals
     Zirmi.Cumulative   = Cumulative;
 
     %Note: This is For GT_'J'
-    for ind4           = 1:length(Str.DataTypeFile);
+    for ind4           = 1:1%length(Str.DataTypeFile);
         cd(Dirs.ExpSet) % Relocate To ExperimentSet (E.g. 0J,3J,18J...)
         
-        for ind5            = 1:length(Str.Sheets);
+        for ind5            = 1:1%length(Str.Sheets);
             temp1               = Str.Sheets{ind5};
             temp2               = Zirmi.(Str.DataTypeFile{ind4}).xls.(Str.Sheets{ind5}).vals;
             [row,col]           = size(temp2);      

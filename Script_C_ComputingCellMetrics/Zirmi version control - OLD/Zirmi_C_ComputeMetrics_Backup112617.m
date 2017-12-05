@@ -1063,8 +1063,7 @@ for i=1:mp
 end;
 time.GT         ={time.GT60,time.GT90,time.GT120};
 time.idx_GT     ={time.idx_GT60,time.idx_GT90,time.idx_GT120};
-disp('time structure variable created')
-disp(time)
+disp('End: "time" structure array created')
 disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 %% Total Distance for Tortosity
 % Note to ADP - Inefficently Written.  
@@ -1095,8 +1094,8 @@ SM.distmap.dm30         =   {SM.distmap.f45to60...
 SM.distmap.f45to60      =   Andre.distmap(GT_45:GT_60,:);
 SM.distmap.f45to90      =   Andre.distmap(GT_45:GT_90,:);
 SM.distmap.f45to120     =   Andre.distmap(GT_45:GT_120,:);
-SM.distmap.dm30cum      =   {SM.distmap.f45to60...
-    ,SM.distmap.f45to90,SM.distmap.f45to120};
+SM.distmap.dm30cum      =   {SM.distmap.f45to60,...
+                                SM.distmap.f45to90,SM.distmap.f45to120};
 %% Selected Macrophages
 %--First Select Macrophage tracks of interest (within a HIGH% of the
 %frames)
@@ -1165,9 +1164,8 @@ end;
 %%%%%%%%%%%%%%%%%%they get selected.  
 disp('END: Finished Calculating Selected Macrophages of Interest')
 %% Section 19 - Selected Tortuosity and Meandering, Velocity  && Velocity Per Frame
-SM.tortuosity       = 0;
-SM.meandering       = 0;
-SM.staticratio      = 0;
+
+clear SM.tortuosity SM.meandering SM.staticratio
 %--Third Apply this knowledge to getting the Data
 %-Structure Array
 clear Meandering Tortuosity Velocity StaticRatio
@@ -1211,7 +1209,7 @@ for I=1:3 % per GT_60, GT_90, and GT_120
             frame_GT=time.GT{I}(i);
             idx_GT=time.idx_GT{I}(i);
             if isnan(idx_GT) % If Nan then this track can't be done
-                disp(strcat('Metrics Part1:GT#',num2str(I),'-Selected Track#',num2str(i),' is nan'))
+                warning(strcat('Zirmi Metrics Part1:GT#',num2str(I),'-Selected Track#',num2str(i),' is nan'))
 %                 pause();
                 Velocity.interval{I}(i)     =nan; %Jun - all zeros discounted
                 Velocity.cum{I}(i)          =nan; % Jun -all zeros discounted    
@@ -1405,7 +1403,7 @@ NodeDistDiff_interval       ={0};
             if isnan(idx_GT) % If Nan then this track can't be done
             %Since we are doing gt_SM and Selected some gt_SM are not in
             %early GTs but in late GTs and/or vice versa
-            disp(strcat('Metrics Part2:GT#',num2str(numGT),'-Selected Track#',num2str(numTrack),' is nan'))
+                warning(strcat('Zirmi Metrics Part2:GT#',num2str(numGT),'-Selected Track#',num2str(numTrack),' is nan'))
                 distdiff_cum{numTrack}              = nan;
                 forwardratio_cum(numTrack)          = nan;  
                 backwardratio_cum(numTrack)         = nan;
@@ -1420,8 +1418,8 @@ NodeDistDiff_interval       ={0};
                 wound_um_cum(numTrack)              = nan;
                 startwound_um_interval(numTrack)    = nan;
                 startwound_um_cum(numTrack)         = nan;
-                wound1234_cum(numTrack)                       = nan;
-                wound1234_interval(numTrack)                  = nan;
+                wound1234_cum(numTrack)             = nan;
+                wound1234_interval(numTrack)        = nan;
             elseif isnan(idx_initial)
             %This would happen only when we do 45 because it might not exist    
                 distdiff_cum{numTrack}              = nan;
@@ -1585,15 +1583,12 @@ NodeDistDiff_interval       ={0};
      SM.FBratio.interval{numGT}         = FBratio.interval{numGT}(gt_SM{numGT});
      SM.FBratio.intervalsm{numGT}       = FBratio.interval{numGT}(Selected);
      SM.FBratio.cum{numGT}              = FBratio.cum{numGT}(Selected);
-%      disp('pause end of GT#')
-%      pause()
  end
 SM.forward.phagosight    = handles.distanceNetwork.forwardRatioTot(Selected);
 SM.backward.phagosight   = handles.distanceNetwork.backwardRatioTot(Selected);
   
 disp('END: Foward and Backward Determinations');
-%% Frame
-%---Calculating Velocity per Frame
+%% Frame (Velocity & Static Ratio)
 clear Frame
 perframe=(0);
 perframe_nonzero=(0);
@@ -1612,10 +1607,8 @@ for i=1:frames
     Velocity.frame.perframe_nonzero{i}=perframe_nonzero;
     StaticRatio.frame.s_perframe_nonnan{i}=s_perframe_nonnan;
 end;
-Frame=0;
 Frame.velocity=Velocity.frame;
 Frame.staticratio=StaticRatio.frame;
-
 disp('End: Frame')
 %% For Plotting Worthy 
 %need to make arrays similar sizes 
@@ -1685,8 +1678,12 @@ display('End: Worthy')
 %      ylabel('Absolute Velocity(um/min)')
 %     title(strcat('Histogram of velocity(um/min)  30-',str_ArrGT{3}))
 %%  Clear vars
-Worthy.time = time;
-Worthy.SM 
-% clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
-
+Worthy.time      = time;
+ID.interval      = gt_SM;
+ID.intervalsm    = Selected;
+ID.cum           = Selected;
+ID.phagosight    = (1:mp);
+Worthy.ID        = ID;
+%Note:  Deleting Structure Arrays: 1.Andre  2.Phagosight 3.distmap 4.Jun
+clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
 display ('FINISHED: Zirmi_C - Compute Metrics')    

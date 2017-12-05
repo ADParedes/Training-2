@@ -79,7 +79,7 @@ display('End: Directory Labeling')
 for J=1:Num.TimeIntervals
     %% Main Directory
     clear FishMean RawMetrics  %Structure Array for the entire fish mean
-    clear Interval IntervalSm Cumulative
+    clear Interval IntervalSM Cumulative
     cd(Dirs.Main)
     %% Sort into Time Specific Structure Arrays
     for ind             = 1:length(Str.MetricName);
@@ -203,38 +203,37 @@ for J=1:Num.TimeIntervals
             end;
             file_excel         = strcat(Str.DataTypeFile{ind4},...
                                             '_',Str.GT{J},'.xlsx');%DataType_Time
-            [NUM_1,TXT_1,RAW_1]= xlsread(file_excel,ind5);
+            exist_excel(ind5)        = exist(file_excel,'file');
+            
+            switch exist_excel(1) 
+                case{0} %file does not exist
+                    xlswrite(file_excel,Sheets.title{ind5},ind5)
+                otherwise %file does exist
+                    [NUM_1,TXT_1,RAW_1] = xlsread(file_excel,ind5);
+                    empty_raw           = isempty(RAW_1);
+                    switch empty_raw
+                        case{0} %is not empty
+                            switch temp1 
+                                case{'MpAll','Score1','Score2','Score3','Score4'}
+                                    Sheets.combo{ind5}=[RAW_1;Sheets.raw{ind5}];
+                                    xlswrite(file_excel,Sheets.combo{ind5},ind5)
+                                otherwise
+                                    Sheets.combo{ind5}=[RAW_1;Sheets.raw{ind5}];
+                                    xlswrite(file_excel,Sheets.combo{ind5},ind5)
+                            end;
+                                                        
+                        otherwise %is empty
+                            xlswrite(file_excel,Sheets.title{ind5},ind5) 
+                    end;
+            end;
+                    
+           
         end;
+        disp(strcat('CheckPoint DataType-',Str.DataTypeFile{J}))
     end;
       
-    %% Big Array
-    STRING={s};
-    STRING_WorC={inputExp};
-    %Sheet 1 Alternative
-    Table_1=0;
-    Arr_Table1=0;
-    Table_1=[Table_Mean];
-    Arr_Table1=horzcat([{'Name'};STRING],Table_1,[{'Frames'};handles.numFrames],[{'ti_d'};ti_d],[{'t_plate'};t_plate]);
-    Arr_Table1=Arr_Table1';
 
-    %% Combined Excel
-%     display(s) 
-
-    %%When STARTING EXCEL FOR FIRST TIME
-%     pause()
-    %%
-    if isempty(TXT{J}) 
-    %     xlswrite(file_excel,Array_1F,1,'A1')
-        xlswrite(file_excel,Arr_Table1,J,'A1')
-
-    else
-    %  Append
-        ARR_SHEET1=[RAW{J},Arr_Table1(:,2)];
-        xlswrite(file_excel,ARR_SHEET1,J,'A1')
-
-    end;
-    %%%%
     disp(strcat('Excel End_',Str.GT{J}))
 end;
-disp(name5)
-disp('FINISHED')
+disp(Str.name)
+disp('FINISHED: Zirmi_F Transfer to .xls Files')
