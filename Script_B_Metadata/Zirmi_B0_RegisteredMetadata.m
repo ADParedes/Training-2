@@ -101,7 +101,7 @@ POI.ParameterA              = 0.70;     %Trackability i.e Minum Cell Track lengt
 POI.Parameter_gtA           = 0.9;      %Trackability per GT
 POI.ParameterB              = 1;        %StaticLimit (1 provides best result)  i.e. 0.8519um. 
 POI.ParameterC              = 65;       %Distance from Wound Margin for Standardizatin of Wound Region 
-POI.ParameterS              = 150;      %Leukocyte Spatial Interval (150um)
+POI.ParameterS              = 100;      %Leukocyte Spatial Interval (150um)
 POI.ParameterZ              = znum;     %Number of Z Positions
 %- ADP Specific 
 ADP.adp1            = hostname;
@@ -160,4 +160,4 @@ message         =   sprintf('Your Registration Parameters have been loaded from:
 msgbox(message);
 
 clearvars -except POI PARAMETERS ADP
-display('FINISHED: S0_RegisteredMetadata.m ')
+display('FINISHED: Zirmi B0_RegisteredMetadata.m ')

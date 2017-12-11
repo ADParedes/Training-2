@@ -25,7 +25,6 @@
 %NOTE:  nanmean([ ]) will average ignoring nan values!!!!
 disp('Zirmi WARNING: Need to have handles.distmap and accurate spatial domains 1 & 2')%Spatial Domain 1 is Wound GAP Spaital domain 2 is Tip of notochord
 disp('Zirmi WARNING: If Removing Movement remember to save NEW handles')
-PARAMETERS.ParameterS              = 100;      %Leukocyte Spatial Interval (150um)
 pause(2);
 %% Load PARAMETERS, POI, PhagoSight & ADP  Needed 
 %Note: Phagosight DNE PhagoSight (two separate variables)
@@ -1488,6 +1487,8 @@ NodeDistDiff_interval       ={0};
                      wound1234_interval(numTrack)              = 3;
                 elseif (dist_notochord+ParameterS+ParameterS) < startwound_um_interval(numTrack)&& startwound_um_interval(numTrack) <=(dist_notochord+ParameterS+ParameterS+ParameterS) 
                      wound1234_interval(numTrack)              = 4;
+                elseif (dist_notochord+ParameterS+ParameterS+ParameterS) < startwound_um_interval(numTrack)&& startwound_um_interval(numTrack) 
+                     wound1234_interval(numTrack)              = 5;
                 end;
                 %--for cummulative
                 withzeroeswounddistnodescum=0;

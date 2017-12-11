@@ -55,8 +55,8 @@ switch ADP.boo2
     case {1,0}
         disp('Hello ADP')
     %-Experiment Type Descriptor
-        Str.ExpSet             ='test';
-%         Dirs.ExpSet           = input('0J,3J,9J,DoubleWound,NoWound ','s');
+%         Str.ExpSet             ='test';
+         Str.ExpSet           = input('Baseline,0J,3J,9J,DoubleWound : ','s');
         if Num.exp<46
             Str.Fish           = 'mpegdendra2';
         elseif Num.exp>46
