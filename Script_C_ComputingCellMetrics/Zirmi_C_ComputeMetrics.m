@@ -23,6 +23,8 @@
 %Category #2
 %We determine if inWound from new made woundRegion
 %NOTE:  nanmean([ ]) will average ignoring nan values!!!!
+
+
 disp('Zirmi WARNING: Need to have handles.distmap and accurate spatial domains 1 & 2')%Spatial Domain 1 is Wound GAP Spaital domain 2 is Tip of notochord
 disp('Zirmi WARNING: If Removing Movement remember to save NEW handles')
 PARAMETERS.ParameterS              = 100;      %Leukocyte Spatial Interval (150um)
@@ -37,6 +39,7 @@ micronsPerPixel         = PARAMETERS.Parameter2;   % LateralPixelResolution
 micronsPerStack         = PARAMETERS.Parameter3;   % micronsPerStack   
 SamplingFrequency       = PARAMETERS.Parameter4;   % Sampling Frequency
 MPI_start               = PARAMETERS.Parameter5;   % Minutes post injury (Start of Imaging) ; old: t_plate
+tplate                  = MPI_start;  %stored original t_plate as tplate incase I need to refer back to it
 
 Parameter_gtA           = POI.Parameter_gtA;       % MTP for all each Temporal segment
 dir_EOI                 = POI.Parameter10c;        % Experiment Directory (E.g. AB020 within Confocal)
@@ -55,9 +58,7 @@ ZstepPixel              = micronsPerStack/micronsPerPixel;
 zval                    = zstack*ZstepPixel-ZstepPixel; %this is just an example, so just take z and multiply by ZstepPixel
 disp('chose zstack based on BF/Phase Contrast'); %..not always accurate - Fixed.
 %% Clearing the Important Structure Arrays
-Phagosight      = 0;
-Andre           = 0;
-
+clear Phagosight Andre
 %% Calculate Frame positions for Time 60,90,120,150,180(max), full.  
 %Access the Position Folder (E.g. P1 or P2..) to determine Frames used
 cd(dir_EOI)
@@ -65,7 +66,6 @@ cd(str_FOI)
 %Save the directory and access folder names to determine Frames
 dname5                  = dir;
 len_dname               = length(dname5);
-tplate                  = MPI_start;  %stored original t_plate as tplate incase I need to refer back to it
 a=0;
 clear arr_T
 clear tfolder
@@ -84,8 +84,8 @@ frames                  = length(arr_T); % or frames=handles.numFrames;
 %handles based frame and track
 [frameinWound,track]    = size(handles.inWound);
 %% Determine the time points after wounding.  
-GT_45   = round((45-MPI_start)/SamplingFrequency); %%%%%%%%%%%%%%%%%%%%CHANGING
-GT_45   = 3;
+% GT_45   = round((45-MPI_start)/SamplingFrequency); %%%%%%%%%%%%%%%%%%%%CHANGING
+GT_45   = 3; %Good So I start after 3 ---> This is only for macrophages - neutrophils I fixed this
 GT_60   = round((60-tplate)/SamplingFrequency);
 GT_90   = round((90-tplate)/SamplingFrequency);
 GT_120  = round((120-tplate)/SamplingFrequency);
@@ -1288,15 +1288,20 @@ for I=1:3 % per GT_60, GT_90, and GT_120
 %                 pause()
             end;    
         end;
-        Coordinates{I}=coords;
+        Coordinates{I}  = coords;
         %--Per Frames
         framei=1;
         if I==1
-            frame1=1;
+            frame1          = 1;
         else
-            frame1=arr_GT(I-1);
+            frame1          = arr_GT(I-1);
         end;
-        frame2=arr_GT(I);
+        frame2          = arr_GT(I);
+        [col,row]       = size(Thismap);
+        if frame2>col
+            frame2 = col;
+        else
+        end;
         %-Velocity per Frame
         v_perframe_interval=Thismap(frame1:frame2,:);
         v_perframe_cum=Thismap(framei:frame2,:);    
@@ -1486,7 +1491,7 @@ NodeDistDiff_interval       ={0};
                     wound1234_interval(numTrack)              = 2;
                 elseif (dist_notochord+ParameterS) < startwound_um_interval(numTrack)&& startwound_um_interval(numTrack) <=(dist_notochord+ParameterS+ParameterS) 
                      wound1234_interval(numTrack)              = 3;
-                elseif (dist_notochord+ParameterS+ParameterS) < startwound_um_interval(numTrack)&& startwound_um_interval(numTrack) <=(dist_notochord+ParameterS+ParameterS+ParameterS) 
+                elseif (dist_notochord+ParameterS+ParameterS) < startwound_um_interval(numTrack)&& startwound_um_interval(numTrack) <=(dist_notochord+ParameterS+ParameterS+ParameterS+1000) 
                      wound1234_interval(numTrack)              = 4;
                 end;
                 %--for cummulative
@@ -1516,7 +1521,7 @@ NodeDistDiff_interval       ={0};
                     wound1234_cum(numTrack)              = 2;
                 elseif (dist_notochord+ParameterS) < startwound_um_cum(numTrack) && startwound_um_cum(numTrack) <=(dist_notochord+ParameterS+ParameterS) 
                      wound1234_cum(numTrack)              = 3;
-                elseif (dist_notochord+ParameterS+ParameterS) < startwound_um_cum(numTrack) && startwound_um_cum(numTrack)<=(dist_notochord+ParameterS+ParameterS+ParameterS) 
+                elseif (dist_notochord+ParameterS+ParameterS) < startwound_um_cum(numTrack) && startwound_um_cum(numTrack)<=(dist_notochord+ParameterS+ParameterS+ParameterS+1000) %Should I make this till the end??
                      wound1234_cum(numTrack)              = 4;
                 else
                     disp(numTrack)

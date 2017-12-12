@@ -61,7 +61,7 @@ end;
 
 %% Update Parameters
 %- PhagoSight Specific Parameters
-ch_Ph2                          = handles.ChannelDistribution(4);
+ch_Ph2                          = handles.ChannelDistribution(4)-1;
 PhagoSight.ch_Ph2               = ch_Ph2;
 ch_GFP                          = round(median(handles.ChannelDistribution(1):handles.ChannelDistribution(3)));
 PhagoSight.ch_GFP               = ch_GFP;
