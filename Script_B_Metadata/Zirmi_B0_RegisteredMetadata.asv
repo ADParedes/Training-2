@@ -127,13 +127,12 @@ prompt                  = {'Enter Parameter1: MaxPixelIntensity:'...
                             ,'Enter Parameter5: MPI - Image Start - Minutes post injury'...
                             ,'Enter ParameterA: Trackability Threshold(%)'...
                             ,'Enter ParameterB: StaticLimit (Pixel)'...
-                            ,'Enter ParameterC: Wound Margin Distance for Wound ROI (Pixel)'...
                             ,'Enter ParameterS: Leukocyte S# from Following Distance Interval From wound(um):'...
                             ,'Enter ParameterZ: # Z stacks:'};
 dlg_title               = 'Input Parameters';
 num_lines               = 1;
 defaultans              = {num2str(POI.Parameter1),num2str(POI.Parameter2),num2str(POI.Parameter3),num2str(POI.Parameter4),num2str(POI.Parameter5)...
-                            ,num2str(POI.ParameterA),num2str(POI.ParameterB),num2str(POI.ParameterC),num2str(POI.ParameterS),num2str(POI.ParameterZ)};
+                            ,num2str(POI.ParameterA),num2str(POI.ParameterB),num2str(POI.ParameterS),num2str(POI.ParameterZ)};
 answer                  = inputdlg(prompt,dlg_title,num_lines,defaultans);
 PARAMETERS.Parameter1              = str2num(answer{1}); % Bits per pixel (BPP)
 PARAMETERS.Parameter2              = str2num(answer{2}); % LateralPixelResolution
@@ -142,18 +141,18 @@ PARAMETERS.Parameter4              = str2num(answer{4}); % Sampling Frequency
 PARAMETERS.Parameter5              = str2num(answer{5}); % MPI
 PARAMETERS.ParameterA              = str2num(answer{6}); % Trackability
 PARAMETERS.ParameterB              = str2num(answer{7}); % Static Ratio
-PARAMETERS.ParameterC              = str2num(answer{8}); % Static Ratio
-PARAMETERS.ParameterS              = str2num(answer{9}); % Spatial Intervals from wound
-PARAMETERS.ParameterZ              = str2num(answer{10}); % # Z stacks
+PARAMETERS.ParameterS              = str2num(answer{8}); % Spatial Intervals from wound
+PARAMETERS.ParameterZ              = str2num(answer{9}); % # Z stacks
 
 POI.Parameter1              = PARAMETERS.Parameter1;
 POI.Parameter2              = PARAMETERS.Parameter2;
 POI.Parameter3              = PARAMETERS.Parameter3;
 POI.Parameter4              = PARAMETERS.Parameter4;
 POI.Parameter5              = PARAMETERS.Parameter5;
-POI.ParameterA              = PARAMETERS.ParameterA;
-POI.ParameterB              = PARAMETERS.ParameterB;
-POI.ParameterC              = PARAMETERS.ParameterC;
+POI.ParameterA              = PARAMETERS.Parameter1;
+POI.Parameter_gtA           = PARAMETERS.Parameter1;
+POI.ParameterB              = PARAMETERS.Parameter1;
+POI.ParameterC              = PARAMETERS.Parameter1;
 POI.ParameterS              = PARAMETERS.Parameter1;
 POI.ParameterZ              = PARAMETERS.Parameter1;
 
