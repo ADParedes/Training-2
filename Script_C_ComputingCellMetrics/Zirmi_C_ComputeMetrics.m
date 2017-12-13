@@ -25,9 +25,11 @@
 %NOTE:  nanmean([ ]) will average ignoring nan values!!!!
 
 
-disp('Zirmi WARNING: Need to have handles.distmap and accurate spatial domains 1 & 2')%Spatial Domain 1 is Wound GAP Spaital domain 2 is Tip of notochord
-disp('Zirmi WARNING: If Removing Movement remember to save NEW handles')
+warning('Zirmi: Need to have handles.distmap and accurate spatial domains 1 & 2')%Spatial Domain 1 is Wound GAP Spaital domain 2 is Tip of notochord
+warning('Zirmi: If Removing Movement remember to save NEW handles')
 PARAMETERS.ParameterS              = 100;      %Leukocyte Spatial Interval (150um)
+display('Velocity is represented by pixel/frame!!!!');
+display('Need to correct this 12/13/2017');
 pause(2);
 %% Load PARAMETERS, POI, PhagoSight & ADP  Needed 
 %Note: Phagosight DNE PhagoSight (two separate variables)
@@ -791,7 +793,12 @@ for J=1:length(arr_GT)
 %                         plot(i_nody,i_nodx,'.','MarkerSize',20);     
                     gtnodxy(ii,1)=i_nodx;
                     gtnodxy(ii,2)=i_nody;
-                    inWound(ii)=woundRegion(round(i_nodx),round(i_nody));
+                    switch isnan(i_nodx)
+                        case{1}
+                            inWound(ii)=NaN;
+                        otherwise
+                            inWound(ii)=woundRegion(round(i_nodx),round(i_nody));
+                    end;
 
                 end;                               
                 framenode=handles.nodeNetwork(temp_uID,5);

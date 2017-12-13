@@ -19,3 +19,4 @@ handles = joinTwoTracks(handles,trackA,trackB);
 
 
 close all
+

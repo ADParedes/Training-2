@@ -4,6 +4,7 @@ close all;
 %% Define/Select Parameters
 clear s input_metric
 micronsPerPixel             = PARAMETERS.Parameter2;   % LateralPixelResolution  
+coe                         = micronsPerPixel/PARAMETERS.Parameter4;
 str_int_timepoints          =['30- 59 min';'60- 89 min';'90-120 min'];
 str_cum_timepoints          =['30- 60 min';'30- 90 min';'30-120 min'];
 [N,~]                           = size(str_int_timepoints);
@@ -26,17 +27,17 @@ input_metric                =input(strcat('Please Write Selected Metric e.g "vel
                                 '"forward"'),'s');
     switch input_metric
         case{'velocity'}
-            %%%--for velocity
-            y                   =SM.(input_metric).interval{1}*micronsPerPixel;
-            y1                  =SM.(input_metric).interval{2}*micronsPerPixel;
-            y2                  =SM.(input_metric).interval{3}*micronsPerPixel;
-            yy                  =SM.(input_metric).cum{1}*micronsPerPixel;
-            yy1                 =SM.(input_metric).cum{2}*micronsPerPixel;
-            yy2                 =SM.(input_metric).cum{3}*micronsPerPixel;
-            yyy                   =SM.(input_metric).intervalsm{1}*micronsPerPixel;
-            yyy1                  =SM.(input_metric).intervalsm{2}*micronsPerPixel;
-            yyy2                  =SM.(input_metric).intervalsm{3}*micronsPerPixel;
-            z                   =SM.(input_metric).phagosight*micronsPerPixel;                     
+            %%%--for velocity5
+            y                   =SM.(input_metric).interval{1}*coe;
+            y1                  =SM.(input_metric).interval{2}*coe;
+            y2                  =SM.(input_metric).interval{3}*coe;
+            yy                  =SM.(input_metric).cum{1}*coe;
+            yy1                 =SM.(input_metric).cum{2}*coe;
+            yy2                 =SM.(input_metric).cum{3}*coe;
+            yyy                   =SM.(input_metric).intervalsm{1}*coe;
+            yyy1                  =SM.(input_metric).intervalsm{2}*coe;
+            yyy2                  =SM.(input_metric).intervalsm{3}*coe;
+            z                   =SM.(input_metric).phagosight*coe;                     
             ymax    = max(y1)+1;
             ymin    = min(y1)-1;           
         otherwise
