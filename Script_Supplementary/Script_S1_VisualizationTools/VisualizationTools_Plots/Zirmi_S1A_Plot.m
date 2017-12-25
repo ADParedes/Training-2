@@ -213,5 +213,5 @@ zzz         = vertcat(yys,yyys);
 % ys=[y;y1;y2];
 
 %% Clear Variables
- clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
+ clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2 time
 

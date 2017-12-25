@@ -1075,7 +1075,7 @@ disp('End: "time" structure array created')
 disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 %% Total Distance for Tortosity
 % Note to ADP - Inefficently Written.  
-clear SM Dizzle
+clear SM Dizzle Zirmi
 str_ArrGT={'60min','90min'...
     ,'120min'};
 % Iteration 30 min Intervals
@@ -1345,6 +1345,19 @@ for I=1:3 % per GT_60, GT_90, and GT_120
     SM.staticratio.interval{I}=StaticRatio.interval{I}(gt_SM{I});
     SM.staticratio.intervalsm{I}=StaticRatio.interval{I}(Selected);
     SM.staticratio.cum{I}=StaticRatio.cum{I}(Selected); %maybe not incorrect
+    
+    Zirmi.velocity.interval{I}=Velocity.interval{I};
+    Zirmi.velocity.intervalsm{I}=Velocity.interval{I};
+    Zirmi.velocity.cum{I}=Velocity.cum{I}; % -ERRORED 4/27/2017 Index exceeds matrix dimensions.
+    Zirmi.tortuosity.interval{I}=Tortuosity.interval{I};
+    Zirmi.tortuosity.intervalsm{I}=Tortuosity.interval{I};
+    Zirmi.tortuosity.cum{I}=Tortuosity.cum{I}(Selected); %maybe not incorrect
+    Zirmi.meandering.interval{I}=Meandering.interval{I};
+    Zirmi.meandering.intervalsm{I}=Meandering.interval{I};
+    Zirmi.meandering.cum{I}=Meandering.cum{I}(Selected); %maybe not incorrect
+    Zirmi.staticratio.interval{I}=StaticRatio.interval{I};
+    Zirmi.staticratio.intervalsm{I}=StaticRatio.interval{I};
+    Zirmi.staticratio.cum{I}=StaticRatio.cum{I}; %maybe not incorrect
 end;
 SM.velocity.phagosight=handles.distanceNetwork.absVelocity(Selected); %correct
 SM.tortuosity.phagosight=handles.distanceNetwork.tortuosity(Selected); %correct
@@ -1596,6 +1609,29 @@ NodeDistDiff_interval       ={0};
      SM.FBratio.interval{numGT}         = FBratio.interval{numGT}(gt_SM{numGT});
      SM.FBratio.intervalsm{numGT}       = FBratio.interval{numGT}(Selected);
      SM.FBratio.cum{numGT}              = FBratio.cum{numGT}(Selected);
+     
+     
+     Zirmi.WoundStartUm.interval{numGT}    = WoundStartUm.interval{numGT}; %These were just to proof, looks good now 08/14/2017
+     Zirmi.WoundStartUm.intervalsm{numGT}  = WoundStartUm.interval{numGT};
+     Zirmi.WoundStartUm.cum{numGT}         = WoundStartUm.cum{numGT};
+     Zirmi.WoundScore1234.interval{numGT}  = WoundScore1234.interval{numGT};
+     Zirmi.WoundScore1234.intervalsm{numGT}= WoundScore1234.interval{numGT};
+     Zirmi.WoundScore1234.cum{numGT}       = WoundScore1234.cum{numGT};
+     Zirmi.WoundScoreUm.interval{numGT}    = WoundScoreUm.interval{numGT};
+     Zirmi.WoundScoreUm.intervalsm{numGT}  = WoundScoreUm.interval{numGT};
+     Zirmi.WoundScoreUm.cum{numGT}         = WoundScoreUm.cum{numGT};
+     Zirmi.forward.interval{numGT}         = Forward.interval{numGT};
+     Zirmi.forward.intervalsm{numGT}       = Forward.interval{numGT};
+     Zirmi.forward.cum{numGT}              = Forward.cum{numGT};
+     Zirmi.backward.interval{numGT}        = Backward.interval{numGT};
+     Zirmi.backward.intervalsm{numGT}      = Backward.interval{numGT};
+     Zirmi.backward.cum{numGT}             = Backward.cum{numGT};
+     Zirmi.FtoB.interval{numGT}            = FtoB.interval{numGT};
+     Zirmi.FtoB.intervalsm{numGT}          = FtoB.interval{numGT};
+     Zirmi.FtoB.cum{numGT}                 = FtoB.cum{numGT};
+     Zirmi.FBratio.interval{numGT}         = FBratio.interval{numGT};
+     Zirmi.FBratio.intervalsm{numGT}       = FBratio.interval{numGT};
+     Zirmi.FBratio.cum{numGT}              = FBratio.cum{numGT};
  end
 SM.forward.phagosight    = handles.distanceNetwork.forwardRatioTot(Selected);
 SM.backward.phagosight   = handles.distanceNetwork.backwardRatioTot(Selected);
@@ -1698,5 +1734,5 @@ ID.cum           = Selected;
 ID.phagosight    = (1:mp);
 Worthy.ID        = ID;
 %Note:  Deleting Structure Arrays: 1.Andre  2.Phagosight 3.distmap 4.Jun
-clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
+ clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2 time Zirmi
 display ('FINISHED: Zirmi_C - Compute Metrics')    
