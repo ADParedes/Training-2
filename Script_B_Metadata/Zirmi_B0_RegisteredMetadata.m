@@ -101,7 +101,7 @@ POI.ParameterA              = 0.70;     %Trackability i.e Minum Cell Track lengt
 POI.Parameter_gtA           = 0.9;      %Trackability per GT
 POI.ParameterB              = 1;        %StaticLimit (1 provides best result)  i.e. 0.8519um. 
 POI.ParameterC              = 65;       %Distance from Wound Margin for Standardizatin of Wound Region 
-POI.ParameterS              = 150;      %Leukocyte Spatial Interval (150um)
+POI.ParameterS              = 100;      %Leukocyte Spatial Interval (150um)
 POI.ParameterZ              = znum;     %Number of Z Positions
 %- ADP Specific 
 ADP.adp1            = hostname;
@@ -127,12 +127,13 @@ prompt                  = {'Enter Parameter1: MaxPixelIntensity:'...
                             ,'Enter Parameter5: MPI - Image Start - Minutes post injury'...
                             ,'Enter ParameterA: Trackability Threshold(%)'...
                             ,'Enter ParameterB: StaticLimit (Pixel)'...
+                            ,'Enter ParameterC: Wound Margin Distance for Wound ROI (Pixel)'...
                             ,'Enter ParameterS: Leukocyte S# from Following Distance Interval From wound(um):'...
                             ,'Enter ParameterZ: # Z stacks:'};
 dlg_title               = 'Input Parameters';
 num_lines               = 1;
 defaultans              = {num2str(POI.Parameter1),num2str(POI.Parameter2),num2str(POI.Parameter3),num2str(POI.Parameter4),num2str(POI.Parameter5)...
-                            ,num2str(POI.ParameterA),num2str(POI.ParameterB),num2str(POI.ParameterS),num2str(POI.ParameterZ)};
+                            ,num2str(POI.ParameterA),num2str(POI.ParameterB),num2str(POI.ParameterC),num2str(POI.ParameterS),num2str(POI.ParameterZ)};
 answer                  = inputdlg(prompt,dlg_title,num_lines,defaultans);
 PARAMETERS.Parameter1              = str2num(answer{1}); % Bits per pixel (BPP)
 PARAMETERS.Parameter2              = str2num(answer{2}); % LateralPixelResolution
@@ -141,8 +142,25 @@ PARAMETERS.Parameter4              = str2num(answer{4}); % Sampling Frequency
 PARAMETERS.Parameter5              = str2num(answer{5}); % MPI
 PARAMETERS.ParameterA              = str2num(answer{6}); % Trackability
 PARAMETERS.ParameterB              = str2num(answer{7}); % Static Ratio
-PARAMETERS.ParameterS              = str2num(answer{8}); % Spatial Intervals from wound
-PARAMETERS.ParameterZ              = str2num(answer{9}); % # Z stacks
+PARAMETERS.ParameterC              = str2num(answer{8}); % Static Ratio
+PARAMETERS.ParameterS              = str2num(answer{9}); % Spatial Intervals from wound
+PARAMETERS.ParameterZ              = str2num(answer{10}); % # Z stacks
+
+POI.Parameter1              = PARAMETERS.Parameter1;
+POI.Parameter2              = PARAMETERS.Parameter2;
+POI.Parameter3              = PARAMETERS.Parameter3;
+POI.Parameter4              = PARAMETERS.Parameter4;
+POI.Parameter5              = PARAMETERS.Parameter5;
+POI.ParameterA              = PARAMETERS.ParameterA;
+POI.ParameterB              = PARAMETERS.ParameterB;
+POI.ParameterC              = PARAMETERS.ParameterC;
+POI.ParameterS              = PARAMETERS.Parameter1;
+POI.ParameterZ              = PARAMETERS.Parameter1;
+
+
+
+
+
 disp(strcat('Registered Bits per Pixel (BPP):',num2str(PARAMETERS.Parameter1)))
 disp(strcat('Registered LateralPixelResolution(um/pixel):',num2str(PARAMETERS.Parameter2)))
 disp(strcat('Registered ZstepMicrons(um):',num2str(PARAMETERS.Parameter3)))
@@ -160,4 +178,4 @@ message         =   sprintf('Your Registration Parameters have been loaded from:
 msgbox(message);
 
 clearvars -except POI PARAMETERS ADP
-display('FINISHED: S0_RegisteredMetadata.m ')
+display('FINISHED: Zirmi B0_RegisteredMetadata.m ')

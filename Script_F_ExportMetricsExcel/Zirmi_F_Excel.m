@@ -4,12 +4,14 @@
 %Updated 2017/11/24
 clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
 disp('START: Zirmi F: Create Excel Tables')
+[c1] = clock;
+c1_fix = fix(c1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Recognized GUI-ed Parameters
 clear Str Num Dirs Cell Array % New Structure Array
 Str.name                = POI.Parameter10d;
 Str.expnum              = POI.Parameter10a(3:end);
-Str.MetricType          ={'Velocity(um/min)','StaticRatio', 'MeanderingRatio',...
+Str.MetricType          ={'Velocity(um/min)','StaticRatio', 'MeanderingRatio',...  Velocity is still pixel per frame
                             'Tortuosity(abu)','ForwardRatio','ForwardtoBackwardRatio'...
                             'WoundDistance(um)','WoundScore(1-4)'};
 Str.MetricName          ={'Velocity','StaticRatio', 'MeanderingRatio',...
@@ -55,8 +57,8 @@ switch ADP.boo2
     case {1,0}
         disp('Hello ADP')
     %-Experiment Type Descriptor
-        Str.ExpSet             ='test';
-%         Dirs.ExpSet           = input('0J,3J,9J,DoubleWound,NoWound ','s');
+%         Str.ExpSet             ='test';
+         Str.ExpSet           = input('Baseline,0J,3J,9J,DoubleWound : ','s');
         if Num.exp<46
             Str.Fish           = 'mpegdendra2';
         elseif Num.exp>46
@@ -236,4 +238,9 @@ for J=1:Num.TimeIntervals
     disp(strcat('Excel End_',Str.GT{J}))
 end;
 disp(Str.name)
+[c2]    = clock;
+c2_fix  = fix(c2);
+str_clock = strcat('Start |',num2str(c1_fix(4)),':',num2str(c1_fix(5)),':',num2str(c1_fix(6))',...
+                   'END: |',num2str(c2_fix(4)),':',num2str(c2_fix(5)),':',num2str(c2_fix(6)));
+disp(str_clock)               
 disp('FINISHED: Zirmi_F Transfer to .xls Files')

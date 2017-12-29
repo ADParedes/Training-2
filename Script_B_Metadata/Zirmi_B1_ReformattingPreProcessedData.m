@@ -15,7 +15,7 @@ len_dir             = len_dir-2;
 cd(pa5);
 
 Parameter11c     = name5;
-Parameter13      = 2;%%% % input_v=input('What Frame?')    <----------LOAD FROM THIS FRAME FOR EXAMPLE VISUALIZTION TIFS
+Parameter15      = 2;%%% % input_v=input('What Frame?')    <----------LOAD FROM THIS FRAME FOR EXAMPLE VISUALIZTION TIFS
 Parameter14      = 'y';% input_OorNoO=input('Does it need an O or not  y/n','s');
 %% Automatically Detecting .mat files of Interest
 %-Paramter14 distinguishes between mat_ORe files and mat_Re files 
@@ -29,14 +29,14 @@ if Parameter14=='n'
     ha2     = strcat(Parameter11c,mat,'Ha');
 elseif Parameter14=='y'
     mat='_mat_O';
-    if Parameter13>9
-        Or=strcat(Parameter11c,mat,'r/T000',num2str(Parameter13),'.mat');
-        Re=strcat(Parameter11c,mat,'Re/T000',num2str(Parameter13),'.mat');
-        La=strcat(Parameter11c,mat,'La/T000',num2str(Parameter13),'.mat');
+    if Parameter15>9
+        Or=strcat(Parameter11c,mat,'r/T000',num2str(Parameter15),'.mat');
+        Re=strcat(Parameter11c,mat,'Re/T000',num2str(Parameter15),'.mat');
+        La=strcat(Parameter11c,mat,'La/T000',num2str(Parameter15),'.mat');
     else
-        Or=strcat(Parameter11c,mat,'r/T0000',num2str(Parameter13),'.mat');
-        Re=strcat(Parameter11c,mat,'Re/T0000',num2str(Parameter13),'.mat');
-        La=strcat(Parameter11c,mat,'La/T0000',num2str(Parameter13),'.mat');            
+        Or=strcat(Parameter11c,mat,'r/T0000',num2str(Parameter15),'.mat');
+        Re=strcat(Parameter11c,mat,'Re/T0000',num2str(Parameter15),'.mat');
+        La=strcat(Parameter11c,mat,'La/T0000',num2str(Parameter15),'.mat');            
     end;
     Ha      = strcat(Parameter11c,mat,'Ha/handles.mat');
     ha2     = strcat(Parameter11c,mat,'Ha');
@@ -61,7 +61,7 @@ end;
 
 %% Update Parameters
 %- PhagoSight Specific Parameters
-ch_Ph2                          = handles.ChannelDistribution(4);
+ch_Ph2                          = handles.ChannelDistribution(4)-1;
 PhagoSight.ch_Ph2               = ch_Ph2;
 ch_GFP                          = round(median(handles.ChannelDistribution(1):handles.ChannelDistribution(3)));
 PhagoSight.ch_GFP               = ch_GFP;
@@ -93,15 +93,23 @@ cd(POI.Parameter10c)
 handles.distMaps    = 0;
 pause(2)
 valsPh2             = POI.Parameter13 ;
+Parameter11d        = str2num(POI.Parameter11c(2:end)); 
+switch ADP.boo2
+    case {0,1}
+        POI.Parameter11d    = Parameter11d+1; %ADP uses P0-P11 (so i need to +1)
+    otherwise        
+end;
+
 %-Need 'valsPh2' ~= valsPH2
-if exist('valsPh2')
-    OriginalImg = valsPh2{POI.ParameterZ}{2};
+if exist('valsPh2') %#ok<EXIST>
+    OriginalImg = valsPh2{POI.Parameter11d}{Parameter15}; % 
     checkConfocal=1;
     valsPH2=valsPh2;
 else
-    OriginalImg = valsPH2{POI.ParameterZ}{2};
+    OriginalImg = valsPH2{POI.Parameter11d}{Parameter15}; 
     checkConfocal=0;
 end;
+
 
 %%  *WoundGAP *Notochord Spatial Domains %update 2017/11/16
 %- Limitation Spatial Domains are not dynamically determined.  The are
@@ -121,7 +129,7 @@ else
     I = PH2_re;
 end;
 %---Last Frame USE I2
-OriginalImg2    = valsPH2{POI.ParameterZ}{(handles.numFrames-2)}; %Using second to last Frame
+OriginalImg2    = valsPH2{POI.Parameter11d}{(handles.numFrames-2)}; %Using second to last Frame
 optimalzstack   = 4;
 I2              = imadjust(OriginalImg2);
 PH2_8bit        = im2uint8(I2);
@@ -162,13 +170,10 @@ PhagoSight.wR1          = wR1;
 PhagoSight.wR2          = wR2;
 PhagoSight.woundRegion  = woundRegion;
 disp('END:Normalizing Spatial Parameters & Wound Region')
-%% Reinfirce 
-pause();
+%% Reinforce 
 close all
 ADP.boo3                = checkConfocal;
 clearvars -except POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
-
-%%  Save
 %% Save
 switch ADP.boo2
     case {0,1}
@@ -185,5 +190,5 @@ cd(dir_metadata);
 disp('Saving...')
 POI.Parameter10d        = strcat(POI.Parameter10a,'_',POI.Parameter11c);
 save(POI.Parameter10d)
-disp('FINISHED: S1_SelectingReformattedPreProcessedData')
+disp('FINISHED: Zirmi B1-B2_SelectingReformattedPreProcessedData')
   

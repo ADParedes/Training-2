@@ -23,13 +23,8 @@
 %Category #2
 %We determine if inWound from new made woundRegion
 %NOTE:  nanmean([ ]) will average ignoring nan values!!!!
-
-
-warning('Zirmi: Need to have handles.distmap and accurate spatial domains 1 & 2')%Spatial Domain 1 is Wound GAP Spaital domain 2 is Tip of notochord
-warning('Zirmi: If Removing Movement remember to save NEW handles')
-PARAMETERS.ParameterS              = 100;      %Leukocyte Spatial Interval (150um)
-display('Velocity is represented by pixel/frame!!!!');
-display('Need to correct this 12/13/2017');
+disp('Zirmi WARNING: Need to have handles.distmap and accurate spatial domains 1 & 2')%Spatial Domain 1 is Wound GAP Spaital domain 2 is Tip of notochord
+disp('Zirmi WARNING: If Removing Movement remember to save NEW handles')
 pause(2);
 %% Load PARAMETERS, POI, PhagoSight & ADP  Needed 
 %Note: Phagosight DNE PhagoSight (two separate variables)
@@ -41,7 +36,6 @@ micronsPerPixel         = PARAMETERS.Parameter2;   % LateralPixelResolution
 micronsPerStack         = PARAMETERS.Parameter3;   % micronsPerStack   
 SamplingFrequency       = PARAMETERS.Parameter4;   % Sampling Frequency
 MPI_start               = PARAMETERS.Parameter5;   % Minutes post injury (Start of Imaging) ; old: t_plate
-tplate                  = MPI_start;  %stored original t_plate as tplate incase I need to refer back to it
 
 Parameter_gtA           = POI.Parameter_gtA;       % MTP for all each Temporal segment
 dir_EOI                 = POI.Parameter10c;        % Experiment Directory (E.g. AB020 within Confocal)
@@ -60,7 +54,9 @@ ZstepPixel              = micronsPerStack/micronsPerPixel;
 zval                    = zstack*ZstepPixel-ZstepPixel; %this is just an example, so just take z and multiply by ZstepPixel
 disp('chose zstack based on BF/Phase Contrast'); %..not always accurate - Fixed.
 %% Clearing the Important Structure Arrays
-clear Phagosight Andre
+Phagosight      = 0;
+Andre           = 0;
+
 %% Calculate Frame positions for Time 60,90,120,150,180(max), full.  
 %Access the Position Folder (E.g. P1 or P2..) to determine Frames used
 cd(dir_EOI)
@@ -68,6 +64,7 @@ cd(str_FOI)
 %Save the directory and access folder names to determine Frames
 dname5                  = dir;
 len_dname               = length(dname5);
+tplate                  = MPI_start;  %stored original t_plate as tplate incase I need to refer back to it
 a=0;
 clear arr_T
 clear tfolder
@@ -86,8 +83,8 @@ frames                  = length(arr_T); % or frames=handles.numFrames;
 %handles based frame and track
 [frameinWound,track]    = size(handles.inWound);
 %% Determine the time points after wounding.  
-% GT_45   = round((45-MPI_start)/SamplingFrequency); %%%%%%%%%%%%%%%%%%%%CHANGING
-GT_45   = 3; %Good So I start after 3 ---> This is only for macrophages - neutrophils I fixed this
+GT_45   = round((45-MPI_start)/SamplingFrequency); %%%%%%%%%%%%%%%%%%%%CHANGING
+GT_45   = 3;
 GT_60   = round((60-tplate)/SamplingFrequency);
 GT_90   = round((90-tplate)/SamplingFrequency);
 GT_120  = round((120-tplate)/SamplingFrequency);
@@ -793,12 +790,7 @@ for J=1:length(arr_GT)
 %                         plot(i_nody,i_nodx,'.','MarkerSize',20);     
                     gtnodxy(ii,1)=i_nodx;
                     gtnodxy(ii,2)=i_nody;
-                    switch isnan(i_nodx)
-                        case{1}
-                            inWound(ii)=NaN;
-                        otherwise
-                            inWound(ii)=woundRegion(round(i_nodx),round(i_nody));
-                    end;
+                    inWound(ii)=woundRegion(round(i_nodx),round(i_nody));
 
                 end;                               
                 framenode=handles.nodeNetwork(temp_uID,5);
@@ -1075,7 +1067,7 @@ disp('End: "time" structure array created')
 disp('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 %% Total Distance for Tortosity
 % Note to ADP - Inefficently Written.  
-clear SM Dizzle Zirmi
+clear SM Dizzle
 str_ArrGT={'60min','90min'...
     ,'120min'};
 % Iteration 30 min Intervals
@@ -1295,20 +1287,15 @@ for I=1:3 % per GT_60, GT_90, and GT_120
 %                 pause()
             end;    
         end;
-        Coordinates{I}  = coords;
+        Coordinates{I}=coords;
         %--Per Frames
         framei=1;
         if I==1
-            frame1          = 1;
+            frame1=1;
         else
-            frame1          = arr_GT(I-1);
+            frame1=arr_GT(I-1);
         end;
-        frame2          = arr_GT(I);
-        [col,row]       = size(Thismap);
-        if frame2>col
-            frame2 = col;
-        else
-        end;
+        frame2=arr_GT(I);
         %-Velocity per Frame
         v_perframe_interval=Thismap(frame1:frame2,:);
         v_perframe_cum=Thismap(framei:frame2,:);    
@@ -1345,19 +1332,6 @@ for I=1:3 % per GT_60, GT_90, and GT_120
     SM.staticratio.interval{I}=StaticRatio.interval{I}(gt_SM{I});
     SM.staticratio.intervalsm{I}=StaticRatio.interval{I}(Selected);
     SM.staticratio.cum{I}=StaticRatio.cum{I}(Selected); %maybe not incorrect
-    
-    Zirmi.velocity.interval{I}=Velocity.interval{I};
-    Zirmi.velocity.intervalsm{I}=Velocity.interval{I};
-    Zirmi.velocity.cum{I}=Velocity.cum{I}; % -ERRORED 4/27/2017 Index exceeds matrix dimensions.
-    Zirmi.tortuosity.interval{I}=Tortuosity.interval{I};
-    Zirmi.tortuosity.intervalsm{I}=Tortuosity.interval{I};
-    Zirmi.tortuosity.cum{I}=Tortuosity.cum{I}(Selected); %maybe not incorrect
-    Zirmi.meandering.interval{I}=Meandering.interval{I};
-    Zirmi.meandering.intervalsm{I}=Meandering.interval{I};
-    Zirmi.meandering.cum{I}=Meandering.cum{I}(Selected); %maybe not incorrect
-    Zirmi.staticratio.interval{I}=StaticRatio.interval{I};
-    Zirmi.staticratio.intervalsm{I}=StaticRatio.interval{I};
-    Zirmi.staticratio.cum{I}=StaticRatio.cum{I}; %maybe not incorrect
 end;
 SM.velocity.phagosight=handles.distanceNetwork.absVelocity(Selected); %correct
 SM.tortuosity.phagosight=handles.distanceNetwork.tortuosity(Selected); %correct
@@ -1511,8 +1485,10 @@ NodeDistDiff_interval       ={0};
                     wound1234_interval(numTrack)              = 2;
                 elseif (dist_notochord+ParameterS) < startwound_um_interval(numTrack)&& startwound_um_interval(numTrack) <=(dist_notochord+ParameterS+ParameterS) 
                      wound1234_interval(numTrack)              = 3;
-                elseif (dist_notochord+ParameterS+ParameterS) < startwound_um_interval(numTrack)&& startwound_um_interval(numTrack) <=(dist_notochord+ParameterS+ParameterS+ParameterS+1000) 
+                elseif (dist_notochord+ParameterS+ParameterS) < startwound_um_interval(numTrack)&& startwound_um_interval(numTrack) <=(dist_notochord+ParameterS+ParameterS+ParameterS) 
                      wound1234_interval(numTrack)              = 4;
+                elseif (dist_notochord+ParameterS+ParameterS+ParameterS) < startwound_um_interval(numTrack)&& startwound_um_interval(numTrack) 
+                     wound1234_interval(numTrack)              = 5;
                 end;
                 %--for cummulative
                 withzeroeswounddistnodescum=0;
@@ -1541,7 +1517,7 @@ NodeDistDiff_interval       ={0};
                     wound1234_cum(numTrack)              = 2;
                 elseif (dist_notochord+ParameterS) < startwound_um_cum(numTrack) && startwound_um_cum(numTrack) <=(dist_notochord+ParameterS+ParameterS) 
                      wound1234_cum(numTrack)              = 3;
-                elseif (dist_notochord+ParameterS+ParameterS) < startwound_um_cum(numTrack) && startwound_um_cum(numTrack)<=(dist_notochord+ParameterS+ParameterS+ParameterS+1000) %Should I make this till the end??
+                elseif (dist_notochord+ParameterS+ParameterS) < startwound_um_cum(numTrack) && startwound_um_cum(numTrack)<=(dist_notochord+ParameterS+ParameterS+ParameterS) 
                      wound1234_cum(numTrack)              = 4;
                 else
                     disp(numTrack)
@@ -1609,29 +1585,6 @@ NodeDistDiff_interval       ={0};
      SM.FBratio.interval{numGT}         = FBratio.interval{numGT}(gt_SM{numGT});
      SM.FBratio.intervalsm{numGT}       = FBratio.interval{numGT}(Selected);
      SM.FBratio.cum{numGT}              = FBratio.cum{numGT}(Selected);
-     
-     
-     Zirmi.WoundStartUm.interval{numGT}    = WoundStartUm.interval{numGT}; %These were just to proof, looks good now 08/14/2017
-     Zirmi.WoundStartUm.intervalsm{numGT}  = WoundStartUm.interval{numGT};
-     Zirmi.WoundStartUm.cum{numGT}         = WoundStartUm.cum{numGT};
-     Zirmi.WoundScore1234.interval{numGT}  = WoundScore1234.interval{numGT};
-     Zirmi.WoundScore1234.intervalsm{numGT}= WoundScore1234.interval{numGT};
-     Zirmi.WoundScore1234.cum{numGT}       = WoundScore1234.cum{numGT};
-     Zirmi.WoundScoreUm.interval{numGT}    = WoundScoreUm.interval{numGT};
-     Zirmi.WoundScoreUm.intervalsm{numGT}  = WoundScoreUm.interval{numGT};
-     Zirmi.WoundScoreUm.cum{numGT}         = WoundScoreUm.cum{numGT};
-     Zirmi.forward.interval{numGT}         = Forward.interval{numGT};
-     Zirmi.forward.intervalsm{numGT}       = Forward.interval{numGT};
-     Zirmi.forward.cum{numGT}              = Forward.cum{numGT};
-     Zirmi.backward.interval{numGT}        = Backward.interval{numGT};
-     Zirmi.backward.intervalsm{numGT}      = Backward.interval{numGT};
-     Zirmi.backward.cum{numGT}             = Backward.cum{numGT};
-     Zirmi.FtoB.interval{numGT}            = FtoB.interval{numGT};
-     Zirmi.FtoB.intervalsm{numGT}          = FtoB.interval{numGT};
-     Zirmi.FtoB.cum{numGT}                 = FtoB.cum{numGT};
-     Zirmi.FBratio.interval{numGT}         = FBratio.interval{numGT};
-     Zirmi.FBratio.intervalsm{numGT}       = FBratio.interval{numGT};
-     Zirmi.FBratio.cum{numGT}              = FBratio.cum{numGT};
  end
 SM.forward.phagosight    = handles.distanceNetwork.forwardRatioTot(Selected);
 SM.backward.phagosight   = handles.distanceNetwork.backwardRatioTot(Selected);
@@ -1734,5 +1687,5 @@ ID.cum           = Selected;
 ID.phagosight    = (1:mp);
 Worthy.ID        = ID;
 %Note:  Deleting Structure Arrays: 1.Andre  2.Phagosight 3.distmap 4.Jun
- clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2 time Zirmi
+clearvars -except Worthy SM Frame POI PARAMETERS ADP PhagoSight handles dataIn dataL dataR ch_GFP ch_Ph2
 display ('FINISHED: Zirmi_C - Compute Metrics')    
